@@ -8,13 +8,13 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Models.Core.AssetAdministrationShell.Generics;
-using BaSyx.Utils.ResultHandling;
+using BaSyx.API.Interfaces;
+using System.Collections.Generic;
 
 namespace BaSyx.API.Clients
 {
-    public interface IAssetAdministrationShellClient
+    public interface IAssetAdministrationShellClient : IAssetAdministrationShellInterface
     {
-        IResult<IAssetAdministrationShell> RetrieveAssetAdministrationShell();
+
     }
 }

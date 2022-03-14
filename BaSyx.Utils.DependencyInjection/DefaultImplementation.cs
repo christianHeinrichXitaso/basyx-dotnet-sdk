@@ -26,6 +26,7 @@ namespace BaSyx.Utils.DependencyInjection
         public static IServiceCollection AddStandardImplementation(this IServiceCollection services)
         {
             services.AddTransient<IAsset, Asset>();
+            services.AddTransient<IAssetInformation, AssetInformation>();
             services.AddTransient<IAssetAdministrationShell, AssetAdministrationShell>();
             services.AddTransient<ISubmodel, Submodel>();
             services.AddTransient<IView, View>();

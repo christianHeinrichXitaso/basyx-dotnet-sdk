@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
 * Copyright (c) 2020, 2021 Robert Bosch GmbH
 * Author: Constantin Ziesche (constantin.ziesche@bosch.com)
 *
@@ -8,13 +8,15 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
+using System.Runtime.Serialization;
 
-using BaSyx.API.Interfaces;
-
-namespace BaSyx.API.Clients
+namespace BaSyx.Models.Core.Common
 {
-    public interface ISubmodelRepositoryClient : ISubmodelRepositoryInterface
+    public enum RequestExtent : int
     {
-    
+        [EnumMember(Value = "withoutBlobValue")]
+        WithoutBlobValue = 0,
+        [EnumMember(Value = "withBlobValue")]
+        WithBlobValue = 1
     }
 }

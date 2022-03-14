@@ -36,6 +36,9 @@ namespace BaSyx.Models.Core.AssetAdministrationShell.Identification
         [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "description")]
         LangStringSet Description { get; }
 
+        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "displayName")]
+        LangStringSet DisplayName { get; }
+
         [IgnoreDataMember]
         IReferable Parent { get; set; }
     }

@@ -14,10 +14,11 @@ using Newtonsoft.Json;
 using System.Runtime.Serialization;
 using BaSyx.Models.Core.AssetAdministrationShell.Views;
 using BaSyx.Models.Core.Common;
+using System.Collections.Generic;
+using System;
 
 namespace BaSyx.Models.Core.AssetAdministrationShell.Generics
 {
-
     /// <summary>
     /// An AssetAdministration Shell. 
     /// </summary>
@@ -32,15 +33,29 @@ namespace BaSyx.Models.Core.AssetAdministrationShell.Generics
         /// <summary>
         /// The asset the AAS is representing. 
         /// </summary>
+        [Obsolete]
         [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "asset")]
         IAsset Asset { get; }
+
+
+        /// <summary>
+        /// The asset the AAS is representing. 
+        /// </summary>
+        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "assetInformation")]
+        IAssetInformation AssetInformation { get; }
+
+        /// <summary>
+        /// The resolved Submodels
+        /// </summary>
+        [IgnoreDataMember]
+        IElementContainer<ISubmodel> Submodels { get; set; }
 
         /// <summary>
         /// The asset of an AAS is typically described by one or more submodels. 
         /// Temporarily no submodel might be assigned to the AAS
         /// </summary>
         [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "submodels")]
-        IElementContainer<ISubmodel> Submodels { get; set; }
+        IEnumerable<IReference<ISubmodel>> SubmodelReferences { get; }
 
         /// <summary>
         /// If needed stakeholder specific views can be defined on the elements of the AAS. 
@@ -52,6 +67,7 @@ namespace BaSyx.Models.Core.AssetAdministrationShell.Generics
         /// An AAS max have one or more concept dictionaries assigned to it.  
         /// The concept dictionaries typically contain only descriptions for elements that are also used within the AAS (via HasSemantics). 
         /// </summary>
+        [Obsolete]
         [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "conceptDictionaries")]
         IElementContainer<IConceptDictionary> ConceptDictionaries { get; }
     }

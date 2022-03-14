@@ -8,22 +8,15 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
+using BaSyx.API.Interfaces;
+using BaSyx.Models.Connectivity.Descriptors;
 using BaSyx.Models.Core.AssetAdministrationShell.Generics;
-using BaSyx.Models.Core.Common;
-using BaSyx.Utils.ResultHandling;
+using System.Collections.Generic;
 
 namespace BaSyx.API.Components
 {
-    public interface ISubmodelRepository
+    public interface ISubmodelRepositoryServiceProvider : IServiceProvider<IEnumerable<ISubmodel>, ISubmodelRepositoryDescriptor>, ISubmodelRepositoryInterface
     {
-        IResult<ISubmodel> CreateSubmodel(ISubmodel submodel);
-
-        IResult<ISubmodel> RetrieveSubmodel(string submodelId);
-
-        IResult<IElementContainer<ISubmodel>> RetrieveSubmodels();
-
-        IResult UpdateSubmodel(string submodelId, ISubmodel submodel);
-
-        IResult DeleteSubmodel(string submodelId);       
+        ISubmodelServiceProviderRegistry SubmodelProviderRegistry { get; }
     }
 }

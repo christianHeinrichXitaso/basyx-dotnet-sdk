@@ -31,6 +31,8 @@ namespace BaSyx.Models.Connectivity.Descriptors
         public string IdShort { get; set; }
         [IgnoreDataMember]
         public LangStringSet Description { get; set; }
+        [IgnoreDataMember]
+        public LangStringSet DisplayName { get; set; }
         public IEnumerable<IEndpoint> Endpoints { get; internal set; }
 
         [IgnoreDataMember]

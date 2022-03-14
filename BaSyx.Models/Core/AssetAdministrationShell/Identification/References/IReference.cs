@@ -29,6 +29,9 @@ namespace BaSyx.Models.Core.AssetAdministrationShell.Identification
         [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "keys")]
         List<IKey> Keys { get; }
 
+        [IgnoreDataMember]
+        KeyElements RefersTo { get; }
+
         /// <summary>
         /// Returns the official string representation of a Reference
         /// </summary>
@@ -37,5 +40,7 @@ namespace BaSyx.Models.Core.AssetAdministrationShell.Identification
     }
 
     public interface IReference<out T> : IReference where T : IReferable
-    { }
+    { 
+        
+    }
 }

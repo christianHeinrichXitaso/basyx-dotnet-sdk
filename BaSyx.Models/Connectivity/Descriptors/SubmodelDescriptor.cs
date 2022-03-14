@@ -28,6 +28,7 @@ namespace BaSyx.Models.Connectivity.Descriptors
         public string IdShort { get; set; }
         
         public LangStringSet Description { get; set; }
+        public LangStringSet DisplayName { get; set; }
         public IReference SemanticId { get; set; }
         public IEnumerable<IEndpoint> Endpoints { get; private set; }
 

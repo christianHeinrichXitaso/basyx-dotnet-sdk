@@ -27,6 +27,7 @@ namespace BaSyx.Models.Connectivity.Descriptors
         public AdministrativeInformation Administration { get; set; }
         public string IdShort { get; set; }
         public LangStringSet Description { get; set; }
+        public LangStringSet DisplayName { get; set; }
         public IEnumerable<IEndpoint> Endpoints { get; internal set; }
 
         [IgnoreDataMember]

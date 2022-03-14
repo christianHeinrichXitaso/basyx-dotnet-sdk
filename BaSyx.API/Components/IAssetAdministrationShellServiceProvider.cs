@@ -8,23 +8,29 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.API.Components;
+using BaSyx.API.Interfaces;
+using BaSyx.Models.Connectivity.Descriptors;
 using BaSyx.Models.Core.AssetAdministrationShell.Generics;
-using System.Linq;
 
-namespace BaSyx.API.AssetAdministrationShell.Extensions
+namespace BaSyx.API.Components
 {
-    public static class AssetAdministrationShellExtensions
+    public interface IAssetAdministrationShellServiceProvider 
+        : IServiceProvider<IAssetAdministrationShell, IAssetAdministrationShellDescriptor>, IAssetAdministrationShellInterface
+    {
+        ISubmodelServiceProviderRegistry SubmodelProviderRegistry { get; }
+    }
+
+    public static class AssetAdministrationShellServiceProviderExtensions
     {
         public static IAssetAdministrationShellServiceProvider CreateServiceProvider(this IAssetAdministrationShell aas, bool includeSubmodels)
         {
-            InternalAssetAdministrationShellServiceProvider sp = new InternalAssetAdministrationShellServiceProvider(aas);            
+            InternalAssetAdministrationShellServiceProvider sp = new InternalAssetAdministrationShellServiceProvider(aas);
 
-            if(includeSubmodels && aas.Submodels?.Count() > 0)
+            if (includeSubmodels && aas.Submodels?.Count > 0)
                 foreach (var submodel in aas.Submodels.Values)
                 {
                     var submodelSp = submodel.CreateServiceProvider();
-                    sp.RegisterSubmodelServiceProvider(submodel.IdShort, submodelSp);
+                    sp.RegisterSubmodelServiceProvider(submodel.Identification.Id, submodelSp);
                 }
 
             return sp;

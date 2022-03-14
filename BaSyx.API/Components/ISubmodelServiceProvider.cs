@@ -12,17 +12,17 @@ using BaSyx.Utils.Client;
 using BaSyx.Models.Core.AssetAdministrationShell.Generics;
 using BaSyx.Utils.ResultHandling;
 using System;
-using BaSyx.API.AssetAdministrationShell;
-using BaSyx.API.Clients;
 using BaSyx.Models.Connectivity.Descriptors;
 using BaSyx.Models.Core.Common;
+using BaSyx.API.Interfaces;
 
 namespace BaSyx.API.Components
 {
+    public delegate void EventDelegate(ISubmodelServiceProvider submodelServiceProvider, IEventMessage eventMessage);
     /// <summary>
     /// Provides basic functions for a Submodel
     /// </summary>
-    public interface ISubmodelServiceProvider : IServiceProvider<ISubmodel, ISubmodelDescriptor>, ISubmodelClient
+    public interface ISubmodelServiceProvider : IServiceProvider<ISubmodel, ISubmodelDescriptor>, ISubmodelInterface
     {
         /// <summary>
         /// Subscribe to value updates of a specific SubmodelElement
@@ -85,5 +85,15 @@ namespace BaSyx.API.Components
         /// </summary>
         /// <param name="messageClient">MessageClient</param>
         void ConfigureEventHandler(IMessageClient messageClient);
+    }
+
+    public static class SubmodelServiceProviderExtensions
+    {
+        public static ISubmodelServiceProvider CreateServiceProvider(this ISubmodel submodel)
+        {
+            InternalSubmodelServiceProvider sp = new InternalSubmodelServiceProvider(submodel);
+
+            return sp;
+        }
     }
 }

@@ -19,6 +19,16 @@ namespace BaSyx.Models.Core.AssetAdministrationShell.Identification
     [DataContract]
     public class Reference : IReference
     {
+        [IgnoreDataMember]
+        public virtual KeyElements RefersTo
+        {
+            get
+            {
+                if (Keys?.Count > 0)
+                    return Keys.Last().Type;
+                return KeyElements.Undefined;
+            }
+        }
 
         [IgnoreDataMember]
         public IKey First
@@ -68,6 +78,9 @@ namespace BaSyx.Models.Core.AssetAdministrationShell.Identification
     [DataContract]
     public class Reference<T> : Reference, IReference<T> where T : IReferable
     {
+        [IgnoreDataMember]
+        public override KeyElements RefersTo => Key.GetKeyElementFromType(typeof(T));
+
         [JsonConstructor]
         public Reference(params IKey[] keys) : base(keys)
         { }

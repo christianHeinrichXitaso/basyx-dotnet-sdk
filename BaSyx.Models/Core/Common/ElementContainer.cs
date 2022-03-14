@@ -21,7 +21,7 @@ namespace BaSyx.Models.Core.Common
 {
     public class ElementContainer<TElement> : IElementContainer<TElement> where TElement : IReferable, IModelElement
     {
-        public const char PATH_SEPERATOR = '/';
+        public const char PATH_SEPERATOR = '.';
 
         private readonly List<IElementContainer<TElement>> _children;
 
@@ -105,65 +105,6 @@ namespace BaSyx.Models.Core.Common
         public int Count => _children.Count;
 
         public bool IsReadOnly => false;
-
-        public IResult<TElement> Create(TElement element)
-        {
-            if (element == null)
-                return new Result<TElement>(new ArgumentNullException(nameof(element)));
-            if (string.IsNullOrEmpty(element.IdShort))
-                return new Result<TElement>(new ArgumentNullException(nameof(element.IdShort)));
-
-            if (this[element.IdShort] == null)
-            {
-                Add(element);
-                return new Result<TElement>(true, element);
-            }
-            else
-                return new Result<TElement>(false, new ConflictMessage(element.IdShort));
-        }
-
-        public IResult<T> Create<T>(T element) where T : class, TElement
-        {
-            if (element == null)
-                return new Result<T>(new ArgumentNullException(nameof(element)));
-            if (string.IsNullOrEmpty(element.IdShort))
-                return new Result<T>(new ArgumentNullException(nameof(element.IdShort)));
-
-            if (this[element.IdShort] == null)
-            {
-                Add(element);
-                return new Result<T>(true, element);
-            }
-            else
-                return new Result<T>(false, new ConflictMessage(element.IdShort));
-        }
-
-        public void Add(TElement element)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-            if (string.IsNullOrEmpty(element.IdShort))
-                throw new ArgumentNullException(nameof(element.IdShort));
-
-            if (this[element.IdShort] == null)
-            {
-                element.Parent = this.Parent;
-
-                IElementContainer<TElement> node;
-                if (element is IElementContainer<TElement> subElements)
-                {
-                    subElements.Parent = this.Parent;
-                    subElements.ParentContainer = this;
-                    subElements.AppendRootPath(this.Path);
-                    node = subElements;
-                }
-                else
-                    node = new ElementContainer<TElement>(Parent, element, this);
-                
-                this._children.Add(node);
-                OnCreated?.Invoke(this, new ElementContainerEventArgs<TElement>(this, element, ChangedEventType.Created));
-            }
-        }
 
         public void AppendRootPath(string rootPath)
         {
@@ -370,15 +311,105 @@ namespace BaSyx.Models.Core.Common
                 return new Result<T>(false, new NotFoundMessage());
         }
 
+        public IResult<TElement> Create(TElement element)
+        {
+            if (element == null)
+                return new Result<TElement>(new ArgumentNullException(nameof(element)));
+            if (string.IsNullOrEmpty(element.IdShort))
+                return new Result<TElement>(new ArgumentNullException(nameof(element.IdShort)));
+
+            if (this[element.IdShort] == null)
+            {
+                Add(element);
+                return new Result<TElement>(true, element);
+            }
+            else
+                return new Result<TElement>(false, new ConflictMessage(element.IdShort));
+        }
+
+        public IResult<T> Create<T>(T element) where T : class, TElement
+        {
+            if (element == null)
+                return new Result<T>(new ArgumentNullException(nameof(element)));
+            if (string.IsNullOrEmpty(element.IdShort))
+                return new Result<T>(new ArgumentNullException(nameof(element.IdShort)));
+
+            if (this[element.IdShort] == null)
+            {
+                Add(element);
+                return new Result<T>(true, element);
+            }
+            else
+                return new Result<T>(false, new ConflictMessage(element.IdShort));
+        }
+
+
+        public virtual IResult<TElement> Create(string idShortPath, TElement element)
+        {
+            if (string.IsNullOrEmpty(idShortPath))
+                return new Result<TElement>(new ArgumentNullException(nameof(idShortPath)));
+            if (element == null)
+                return new Result<TElement>(new ArgumentNullException(nameof(element)));
+
+            if (idShortPath.Length == 1 && idShortPath[0] == PATH_SEPERATOR)
+                return this.Create(element);
+            else
+            {
+                var child = GetChild(idShortPath);
+                if (child != null)
+                    return child.Create(element);
+                else
+                    return new Result<TElement>(false, new NotFoundMessage($"Parent element {idShortPath} not found"));
+            }
+        }
+
+        public void Add(TElement element)
+        {
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
+            if (string.IsNullOrEmpty(element.IdShort))
+                throw new ArgumentNullException(nameof(element.IdShort));
+
+            if (this[element.IdShort] == null)
+            {
+                element.Parent = this.Parent;
+
+                IElementContainer<TElement> node;
+                if (element is IElementContainer<TElement> subElements)
+                {
+                    subElements.Parent = this.Parent;
+                    subElements.ParentContainer = this;
+                    subElements.AppendRootPath(this.Path);
+                    node = subElements;
+                }
+                else
+                    node = new ElementContainer<TElement>(Parent, element, this);
+
+                this._children.Add(node);
+                OnCreated?.Invoke(this, new ElementContainerEventArgs<TElement>(this, element, ChangedEventType.Created));
+            }
+        }
+
         public virtual IResult<TElement> CreateOrUpdate(string idShortPath, TElement element)
         {
             if (string.IsNullOrEmpty(idShortPath))
                 return new Result<TElement>(new ArgumentNullException(nameof(idShortPath)));
             if (element == null)
                 return new Result<TElement>(new ArgumentNullException(nameof(element)));
-            
-            var child = GetChild(idShortPath);
-            if (child != null)
+
+            if(idShortPath.Length == 1 && idShortPath[0] == PATH_SEPERATOR)
+            {
+                if (HasChild(IdShort))
+                    return this.Update(idShortPath, element);
+                else
+                    return this.Create(element);
+            }
+            else if (!idShortPath.Contains(PATH_SEPERATOR) && idShortPath != element.IdShort)
+            {
+                int childIndex = _children.FindIndex(p => p.IdShort == idShortPath);
+                return _children[childIndex].Create(element);
+            }
+            else if (HasChild(idShortPath))
             {
                 int childIndex = _children.FindIndex(p => p.IdShort == idShortPath);
                 if(element is IElementContainer<TElement> container)
@@ -390,12 +421,17 @@ namespace BaSyx.Models.Core.Common
             }
             else if (idShortPath.Contains(PATH_SEPERATOR))
             {
-                string parentPath = idShortPath.Substring(0, idShortPath.LastIndexOf('/'));
-                var parent = GetChild(parentPath);
-                if (parent != null)
-                    return parent.Create(element);
+                string lastElement = idShortPath.Substring(idShortPath.LastIndexOf(PATH_SEPERATOR), idShortPath.Length - idShortPath.LastIndexOf(PATH_SEPERATOR));
+                var child = GetChild(idShortPath);
+                if (child != null)
+                {
+                    if (lastElement == element.IdShort)
+                        return child.Update(element.IdShort, element);
+                    else
+                        return child.Create(element);
+                }
                 else
-                    return new Result<TElement>(false, new NotFoundMessage($"Parent element {parentPath} not found"));
+                    return new Result<TElement>(false, new NotFoundMessage($"Parent element {idShortPath} not found"));
             }
             else
                 return this.Create(element);
@@ -409,14 +445,19 @@ namespace BaSyx.Models.Core.Common
             if (element == null)
                 return new Result<TElement>(new ArgumentNullException(nameof(element)));
 
-            var child = GetChild(idShortPath);
-            if (child != null)
+            if (idShortPath.Length == 1 && idShortPath[0] == PATH_SEPERATOR)
+                return this.Create(element);
+            else
             {
-                child.Value = element;
-                OnUpdated?.Invoke(this, new ElementContainerEventArgs<TElement>(child.ParentContainer, element, ChangedEventType.Updated));
-                return new Result<TElement>(true, element);
+                var child = GetChild(idShortPath);
+                if (child != null)
+                {
+                    child.Value = element;
+                    OnUpdated?.Invoke(this, new ElementContainerEventArgs<TElement>(child.ParentContainer, element, ChangedEventType.Updated));
+                    return new Result<TElement>(true, element);
+                }
+                return new Result<TElement>(false, new NotFoundMessage());
             }
-            return new Result<TElement>(false, new NotFoundMessage());
         }
 
         public virtual IResult Delete(string idShortPath)

@@ -21,6 +21,7 @@ namespace BaSyx.Models.Core.AssetAdministrationShell.Implementations
         public string IdShort { get; set; }
         public string Category { get; set; }
         public LangStringSet Description { get; set; }
+        public LangStringSet DisplayName { get; set; }
         public IReferable Parent { get; set; }
         public Dictionary<string, string> MetaData { get; set; }
                  

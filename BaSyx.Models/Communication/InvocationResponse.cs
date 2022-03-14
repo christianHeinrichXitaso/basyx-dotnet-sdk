@@ -26,8 +26,8 @@ namespace BaSyx.Models.Communication
         [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "outputArguments")]
         public IOperationVariableSet OutputArguments { get; set; }
 
-        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "operationResult")]
-        public OperationResult OperationResult { get; set; }
+        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "executionResult")]
+        public OperationResult ExecutionResult { get; set; }
 
         [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "executionState")]
         public ExecutionState ExecutionState { get; set; }

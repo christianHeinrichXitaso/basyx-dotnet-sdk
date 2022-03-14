@@ -8,7 +8,6 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.API.AssetAdministrationShell;
 using BaSyx.API.Clients;
 using BaSyx.Models.Core.AssetAdministrationShell.Generics;
 using BaSyx.Utils.Client;
@@ -112,9 +111,9 @@ namespace BaSyx.API.Components
             throw new NotImplementedException();
         }
 
-        public IResult<ISubmodelElement> CreateOrUpdateSubmodelElement(string rootSubmodelElementPath, ISubmodelElement submodelElement)
+        public IResult<ISubmodelElement> UpdateSubmodelElement(string rootSubmodelElementPath, ISubmodelElement submodelElement)
         {
-            return submodelClient.CreateOrUpdateSubmodelElement(rootSubmodelElementPath, submodelElement);
+            return submodelClient.UpdateSubmodelElement(rootSubmodelElementPath, submodelElement);
         }
 
         public IResult<IElementContainer<ISubmodelElement>> RetrieveSubmodelElements()
@@ -150,6 +149,21 @@ namespace BaSyx.API.Components
         public IResult UpdateSubmodelElementValue(string submodelElementId, IValue value)
         {
             return submodelClient.UpdateSubmodelElementValue(submodelElementId, value);
+        }
+
+        public IResult<ISubmodel> RetrieveSubmodel(RequestLevel level, RequestContent content, RequestExtent extent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResult UpdateSubmodel(ISubmodel submodel)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResult<ISubmodelElement> CreateSubmodelElement(string rootIdShortPath, ISubmodelElement submodelElement)
+        {
+            throw new NotImplementedException();
         }
     }
 }

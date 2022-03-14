@@ -13,52 +13,54 @@ using BaSyx.Models.Core.Common;
 using BaSyx.Utils.ResultHandling;
 using System;
 
-namespace BaSyx.API.Components
+namespace BaSyx.API.Interfaces
 {
     /// <summary>
-    /// The SubmodelRegistry-Interface
+    /// Submodel Registry Interface
     /// </summary>
-    public interface ISubmodelRegistry
+    public interface ISubmodelRegistryInterface
     {
         /// <summary>
-        /// Creates a new or updates an existing Submodel registration at a specific Asset Administration Shell registered at the Registry
+        /// Creates a new Submodel registration
         /// </summary>
-        /// <param name="aasId">The Asset Administration Shell's unique id</param>
+        /// <param name="submodelDescriptor">The Submodel Descriptor</param>
+        /// <returns>Result object with embedded Submodel Descriptor</returns>
+        IResult<ISubmodelDescriptor> CreateSubmodelRegistration(ISubmodelDescriptor submodelDescriptor);
+
+        /// <summary>
+        /// Updates an existing Submodel registration
+        /// </summary>
         /// <param name="submodelId">The Submodel's unique id</param>
         /// <param name="submodelDescriptor">The Submodel Descriptor</param>
         /// <returns>Result object with embedded Submodel Descriptor</returns>
-        IResult<ISubmodelDescriptor> CreateOrUpdateSubmodelRegistration(string aasId, string submodelId, ISubmodelDescriptor submodelDescriptor);
+        IResult<ISubmodelDescriptor> UpdateSubmodelRegistration(string submodelId, ISubmodelDescriptor submodelDescriptor);
 
         /// <summary>
-        /// Retrieves all Submodel registrations from a specific Asset Administration Shell registered at the Registry
+        /// Retrieves all Submodel registrations
         /// </summary>
-        /// <param name="aasId">The Asset Administration Shell's unique id</param>
         /// <param name="predicate">The predicate to explicitly look for specific Asset Administration Shell Descriptors</param>
         /// <returns>Result object with embedded list of Asset Administration Shell Descriptors</returns>
-        IResult<IQueryableElementContainer<ISubmodelDescriptor>> RetrieveAllSubmodelRegistrations(string aasId);
+        IResult<IQueryableElementContainer<ISubmodelDescriptor>> RetrieveAllSubmodelRegistrations();
 
         /// <summary>
-        /// Retrieves all Submodel registrations from a specific Asset Administration Shell registered at the Registry with a certain search predicate
+        /// Retrieves all Submodel registrations with a certain search predicate
         /// </summary>
-        /// <param name="aasId">The Asset Administration Shell's unique id</param>
         /// <param name="predicate">The predicate to explicitly look for specific Asset Administration Shell Descriptors</param>
         /// <returns>Result object with embedded list of Asset Administration Shell Descriptors</returns>
-        IResult<IQueryableElementContainer<ISubmodelDescriptor>> RetrieveAllSubmodelRegistrations(string aasId, Predicate<ISubmodelDescriptor> predicate);
+        IResult<IQueryableElementContainer<ISubmodelDescriptor>> RetrieveAllSubmodelRegistrations(Predicate<ISubmodelDescriptor> predicate);
 
         /// <summary>
-        /// Retrieves the Submodel registration from a specific Asset Administration Shell registered at the Registry
+        /// Retrieves the Submodel registration
         /// </summary>
-        /// <param name="aasId">The Asset Administration Shell's unique id</param>
         /// <param name="submodelId">The Submodel's unique id</param>
         /// <returns>Result object with embedded Submodel Descriptor</returns>
-        IResult<ISubmodelDescriptor> RetrieveSubmodelRegistration(string aasId, string submodelId);
+        IResult<ISubmodelDescriptor> RetrieveSubmodelRegistration(string submodelId);
 
         /// <summary>
-        /// Unregisters the Submodel from a specific Asset Administration Shell registered at the Registry
+        /// De-registers the Submodel
         /// </summary>
-        /// <param name="aasId">The Asset Administration Shell's unique id</param>
         /// <param name="submodelId">The Submodel's unique id</param>
         /// <returns>Result object returning only the success of the operation</returns>
-        IResult DeleteSubmodelRegistration(string aasId, string submodelId);
+        IResult DeleteSubmodelRegistration(string submodelId);
     }
 }

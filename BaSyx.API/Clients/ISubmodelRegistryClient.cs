@@ -8,18 +8,12 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.API.Components;
-using BaSyx.Models.Core.AssetAdministrationShell.Generics;
+using BaSyx.API.Interfaces;
 
-namespace BaSyx.API.AssetAdministrationShell.Extensions
+namespace BaSyx.API.Clients
 {
-    public static class SubmodelExtensions
+    public interface ISubmodelRegistryClient : ISubmodelRegistryInterface
     {
-        public static ISubmodelServiceProvider CreateServiceProvider(this ISubmodel submodel)
-        {
-            InternalSubmodelServiceProvider sp = new InternalSubmodelServiceProvider(submodel);
-
-            return sp;
-        }
+        
     }
 }

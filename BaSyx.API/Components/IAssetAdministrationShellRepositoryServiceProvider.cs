@@ -8,22 +8,16 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
+using BaSyx.API.Interfaces;
+using BaSyx.Models.Connectivity.Descriptors;
 using BaSyx.Models.Core.AssetAdministrationShell.Generics;
-using BaSyx.Models.Core.Common;
-using BaSyx.Utils.ResultHandling;
+using System.Collections.Generic;
 
 namespace BaSyx.API.Components
 {
-    public interface IAssetAdministrationShellRepository
+    public interface IAssetAdministrationShellRepositoryServiceProvider 
+        : IServiceProvider<IEnumerable<IAssetAdministrationShell>, IAssetAdministrationShellRepositoryDescriptor>, IAssetAdministrationShellRepositoryInterface
     {
-        IResult<IAssetAdministrationShell> CreateAssetAdministrationShell(IAssetAdministrationShell aas);
-
-        IResult<IAssetAdministrationShell> RetrieveAssetAdministrationShell(string aasId);
-
-        IResult<IElementContainer<IAssetAdministrationShell>> RetrieveAssetAdministrationShells();
-
-        IResult UpdateAssetAdministrationShell(string aasId, IAssetAdministrationShell aas);
-
-        IResult DeleteAssetAdministrationShell(string aasId);       
+        IAssetAdministrationShellServiceProviderRegistry ShellProviderRegistry { get; }
     }
 }

@@ -8,13 +8,12 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Models.Connectivity.Descriptors;
-using BaSyx.Models.Core.AssetAdministrationShell.Generics;
+using BaSyx.API.Interfaces;
 
-namespace BaSyx.API.Components
+namespace BaSyx.API.Clients
 {
-    public interface IAssetAdministrationShellServiceProvider : IServiceProvider<IAssetAdministrationShell, IAssetAdministrationShellDescriptor>
+    public interface IAssetAdministrationShellRepositoryClient : IAssetAdministrationShellRepositoryInterface
     {
-        ISubmodelServiceProviderRegistry SubmodelRegistry { get; }
+        
     }
 }

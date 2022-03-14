@@ -8,23 +8,12 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Models.Core.AssetAdministrationShell.Generics;
-using BaSyx.Utils.ResultHandling;
-using BaSyx.Models.Core.Common;
 using BaSyx.API.Interfaces;
 
 namespace BaSyx.API.Clients
 {
-    public interface ISubmodelClient : ISubmodelInterface
+    public interface IAssetAdministrationShellRegistryClient : IAssetAdministrationShellRegistryInterface
     {
 
-    }
-
-    public static class SubmodelClientExtensions
-    {
-        public static IResult<ISubmodel> RetrieveSubmodel(this ISubmodelClient submodelClient)
-        {
-            return submodelClient.RetrieveSubmodel(RequestLevel.Deep, RequestContent.Normal, RequestExtent.WithoutBlobValue);
-        }
     }
 }

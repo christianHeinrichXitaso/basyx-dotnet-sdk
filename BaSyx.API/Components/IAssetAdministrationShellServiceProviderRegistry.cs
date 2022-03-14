@@ -16,9 +16,9 @@ namespace BaSyx.API.Components
 {
     public interface IAssetAdministrationShellServiceProviderRegistry
     {
-        IResult<IAssetAdministrationShellDescriptor> RegisterAssetAdministrationShellServiceProvider(string id, IAssetAdministrationShellServiceProvider assetAdministrationShellServiceProvider);
-        IResult UnregisterAssetAdministrationShellServiceProvider(string id);
-        IResult<IAssetAdministrationShellServiceProvider> GetAssetAdministrationShellServiceProvider(string id);
+        IResult<IAssetAdministrationShellDescriptor> RegisterAssetAdministrationShellServiceProvider(string aasIdentifier, IAssetAdministrationShellServiceProvider aasServiceProvider);
+        IResult UnregisterAssetAdministrationShellServiceProvider(string aasIdentifier);
+        IResult<IAssetAdministrationShellServiceProvider> GetAssetAdministrationShellServiceProvider(string aasIdentifier);
         IResult<IEnumerable<IAssetAdministrationShellServiceProvider>> GetAssetAdministrationShellServiceProviders();
     }
 }

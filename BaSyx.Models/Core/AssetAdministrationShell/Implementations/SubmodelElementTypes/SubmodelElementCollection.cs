@@ -70,7 +70,7 @@ namespace BaSyx.Models.Core.AssetAdministrationShell.Implementations
             Value = new ElementContainer<ISubmodelElement>(this.Parent, this, null);
 
             Get = element => { return new ElementValue(Value, typeof(ElementContainer<ISubmodelElement>)); };
-            Set = (element, value) => { Value = value?.Value as IElementContainer<ISubmodelElement>; };
+            Set = (element, value) => { Value = (IElementContainer<ISubmodelElement>)value.Value; };
         }
 
         public event EventHandler<ElementContainerEventArgs<ISubmodelElement>> OnCreated
@@ -180,6 +180,11 @@ namespace BaSyx.Models.Core.AssetAdministrationShell.Implementations
         public IResult<ISubmodelElement> CreateOrUpdate(string id, ISubmodelElement element)
         {
             return Value.CreateOrUpdate(id, element);
+        }
+
+        public IResult<ISubmodelElement> Create(string id, ISubmodelElement element)
+        {
+            return Value.Create(id, element);
         }
 
         public IResult<ISubmodelElement> Update(string id, ISubmodelElement element)

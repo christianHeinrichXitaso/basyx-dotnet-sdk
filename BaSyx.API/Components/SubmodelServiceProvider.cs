@@ -8,7 +8,6 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.API.AssetAdministrationShell;
 using BaSyx.Models.Core.AssetAdministrationShell.Generics;
 using BaSyx.Utils.ResultHandling;
 using BaSyx.Utils.Client;
@@ -23,6 +22,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using BaSyx.Models.Core.AssetAdministrationShell.Implementations;
 using Microsoft.Extensions.Logging;
+using BaSyx.Models.Core.AssetAdministrationShell.Identification;
 
 namespace BaSyx.API.Components
 {
@@ -179,34 +179,34 @@ namespace BaSyx.API.Components
             }
         }
         
-        public MethodCalledHandler RetrieveMethodCalledHandler(string pathToOperation)
+        public MethodCalledHandler RetrieveMethodCalledHandler(string idShortPath)
         {
-            if (methodCalledHandler.TryGetValue(pathToOperation, out MethodCalledHandler handler))
+            if (methodCalledHandler.TryGetValue(idShortPath, out MethodCalledHandler handler))
                 return handler;
             else
                 return null;
         }
        
-        public SubmodelElementHandler RetrieveSubmodelElementHandler(string pathToElement)
+        public SubmodelElementHandler RetrieveSubmodelElementHandler(string idShortPath)
         {
-            if (submodelElementHandler.TryGetValue(pathToElement, out SubmodelElementHandler elementHandler))
+            if (submodelElementHandler.TryGetValue(idShortPath, out SubmodelElementHandler elementHandler))
                 return elementHandler;
             else
                 return null;
         }
       
-        public void RegisterSubmodelElementHandler(string pathToElement, SubmodelElementHandler elementHandler)
+        public void RegisterSubmodelElementHandler(string idShortPath, SubmodelElementHandler elementHandler)
         {
-            if (!submodelElementHandler.ContainsKey(pathToElement))
-                submodelElementHandler.Add(pathToElement, elementHandler);
+            if (!submodelElementHandler.ContainsKey(idShortPath))
+                submodelElementHandler.Add(idShortPath, elementHandler);
             else
-                submodelElementHandler[pathToElement] = elementHandler;
+                submodelElementHandler[idShortPath] = elementHandler;
         }
 
-        public void UnregisterSubmodelElementHandler(string pathToElement)
+        public void UnregisterSubmodelElementHandler(string idShortPath)
         {
-            if (submodelElementHandler.ContainsKey(pathToElement))
-                submodelElementHandler.Remove(pathToElement);
+            if (submodelElementHandler.ContainsKey(idShortPath))
+                submodelElementHandler.Remove(idShortPath);
         }
 
         public void RegisterMethodCalledHandler(string pathToOperation, MethodCalledHandler handler)
@@ -270,7 +270,7 @@ namespace BaSyx.API.Components
                     {
                         cancellationTokenSource.Cancel();
 
-                        invocationResponse.OperationResult = runner.Result;
+                        invocationResponse.ExecutionResult = runner.Result;
                         if (invocationResponse.ExecutionState != ExecutionState.Failed)
                             invocationResponse.ExecutionState = ExecutionState.Completed;
 
@@ -279,7 +279,7 @@ namespace BaSyx.API.Components
                     else
                     {
                         cancellationTokenSource.Cancel();
-                        invocationResponse.OperationResult = new OperationResult(false, new TimeoutMessage());
+                        invocationResponse.ExecutionResult = new OperationResult(false, new TimeoutMessage());
                         invocationResponse.ExecutionState = ExecutionState.Timeout;
                         return new Result<InvocationResponse>(true, invocationResponse);
                     }
@@ -313,29 +313,29 @@ namespace BaSyx.API.Components
             return variables;
         }
 
-        public IResult<CallbackResponse> InvokeOperationAsync(string pathToOperation, InvocationRequest invocationRequest)
+        public IResult<CallbackResponse> InvokeOperationAsync(string idShortPath, InvocationRequest invocationRequest)
         {
             if (_submodel == null)
                 return new Result<CallbackResponse>(false, new NotFoundMessage("Submodel"));
             if (invocationRequest == null)
                 return new Result<CallbackResponse>(new ArgumentNullException(nameof(invocationRequest)));
 
-            var operation_Retrieved = _submodel.SubmodelElements.Retrieve<IOperation>(pathToOperation);
+            var operation_Retrieved = _submodel.SubmodelElements.Retrieve<IOperation>(idShortPath);
             if (operation_Retrieved.Success && operation_Retrieved.Entity != null)
             {
                 MethodCalledHandler methodHandler;
-                if (methodCalledHandler.TryGetValue(pathToOperation, out MethodCalledHandler handler))
+                if (methodCalledHandler.TryGetValue(idShortPath, out MethodCalledHandler handler))
                     methodHandler = handler;
                 else if (operation_Retrieved.Entity.OnMethodCalled != null)
                     methodHandler = operation_Retrieved.Entity.OnMethodCalled;
                 else
-                    return new Result<CallbackResponse>(false, new NotFoundMessage($"MethodHandler for {pathToOperation}"));
+                    return new Result<CallbackResponse>(false, new NotFoundMessage($"MethodHandler for {idShortPath}"));
              
                 Task invocationTask = Task.Run(async() =>
                 {
                     InvocationResponse invocationResponse = new InvocationResponse(invocationRequest.RequestId);
                     invocationResponse.InOutputArguments = invocationRequest.InOutputArguments;
-                    SetInvocationResult(pathToOperation, invocationRequest.RequestId, ref invocationResponse);
+                    SetInvocationResult(idShortPath, invocationRequest.RequestId, ref invocationResponse);
 
                     int timeout = DEFAULT_TIMEOUT;
                     if (invocationRequest.Timeout.HasValue)
@@ -360,25 +360,20 @@ namespace BaSyx.API.Components
                         if (await Task.WhenAny(runner, Task.Delay(timeout, cancellationTokenSource.Token)) == runner)
                         {
                             cancellationTokenSource.Cancel();
-                            invocationResponse.OperationResult = runner.Result;
+                            invocationResponse.ExecutionResult = runner.Result;
                             if (invocationResponse.ExecutionState != ExecutionState.Failed)
                                 invocationResponse.ExecutionState = ExecutionState.Completed;
                         }
                         else
                         {
                             cancellationTokenSource.Cancel();
-                            invocationResponse.OperationResult = new OperationResult(false, new TimeoutMessage());
+                            invocationResponse.ExecutionResult = new OperationResult(false, new TimeoutMessage());
                             invocationResponse.ExecutionState = ExecutionState.Timeout;
                         }
                     }
                 });
          
-                string endpoint = ServiceDescriptor?.Endpoints?.FirstOrDefault()?.Address;
                 CallbackResponse callbackResponse = new CallbackResponse(invocationRequest.RequestId);
-                if (string.IsNullOrEmpty(endpoint))
-                    callbackResponse.CallbackUrl = new Uri($"/submodelElements/{pathToOperation}/invocationList/{invocationRequest.RequestId}", UriKind.Relative);
-                else
-                    callbackResponse.CallbackUrl = new Uri($"{endpoint}/submodelElements/{pathToOperation}/invocationList/{invocationRequest.RequestId}", UriKind.Absolute);
                 return new Result<CallbackResponse>(true, callbackResponse);
             }
             return new Result<CallbackResponse>(operation_Retrieved);
@@ -440,37 +435,52 @@ namespace BaSyx.API.Components
             this.messageClient = messageClient;
         }
        
-        public virtual void SubscribeUpdates(string pathToSubmodelElement, Action<IValue> updateFunction)
+        public virtual void SubscribeUpdates(string idShortPath, Action<IValue> updateFunction)
         {
-            if (!updateFunctions.ContainsKey(pathToSubmodelElement))
-                updateFunctions.Add(pathToSubmodelElement, updateFunction);
+            if (!updateFunctions.ContainsKey(idShortPath))
+                updateFunctions.Add(idShortPath, updateFunction);
             else
-                updateFunctions[pathToSubmodelElement] = updateFunction;
+                updateFunctions[idShortPath] = updateFunction;
         }
        
-        public virtual void PublishUpdate(string pathToSubmodelElement, IValue value)
+        public virtual void PublishUpdate(string idShortPath, IValue value)
         {
-            if (updateFunctions.TryGetValue(pathToSubmodelElement, out Action<IValue> updateFunction))
+            if (updateFunctions.TryGetValue(idShortPath, out Action<IValue> updateFunction))
                 updateFunction.Invoke(value);
 
         }
 
-        public IResult<ISubmodel> RetrieveSubmodel()
-        {
-            return new Result<ISubmodel>(_submodel != null, _submodel);
-        }
-
-        public IResult<ISubmodelElement> CreateOrUpdateSubmodelElement(string pathToSubmodelElement, ISubmodelElement submodelElement)
-            => CreateOrUpdateSubmodelElement(pathToSubmodelElement, submodelElement, new SubmodelElementHandler(submodelElement.Get, submodelElement.Set));
-
-        public IResult<ISubmodelElement> CreateOrUpdateSubmodelElement(string pathToSubmodelElement, ISubmodelElement submodelElement, SubmodelElementHandler submodelElementHandler)
+        public IResult<ISubmodelElement> CreateSubmodelElement(string idShortPath, ISubmodelElement submodelElement)
         {
             if (_submodel == null)
                 return new Result<ISubmodelElement>(false, new NotFoundMessage("Submodel"));
 
-            var created = _submodel.SubmodelElements.CreateOrUpdate(pathToSubmodelElement, submodelElement);
+            var created = _submodel.SubmodelElements.Create(idShortPath, submodelElement);
             if (created.Success && created.Entity != null)
-                RegisterSubmodelElementHandler(pathToSubmodelElement, submodelElementHandler);
+                RegisterSubmodelElementHandler(idShortPath, new SubmodelElementHandler(submodelElement.Get, submodelElement.Set));
+            return created;
+        }
+
+
+        public IResult<ISubmodelElement> UpdateSubmodelElement(string idShortPath, ISubmodelElement submodelElement)
+        {
+            if (_submodel == null)
+                return new Result<ISubmodelElement>(false, new NotFoundMessage("Submodel"));
+
+            var updated = _submodel.SubmodelElements.Update(idShortPath, submodelElement);
+            if (updated.Success && updated.Entity != null)
+                RegisterSubmodelElementHandler(idShortPath, new SubmodelElementHandler(submodelElement.Get, submodelElement.Set));
+            return updated;
+        }
+
+        public IResult<ISubmodelElement> CreateOrUpdateSubmodelElement(string idShortPath, ISubmodelElement submodelElement, SubmodelElementHandler submodelElementHandler)
+        {
+            if (_submodel == null)
+                return new Result<ISubmodelElement>(false, new NotFoundMessage("Submodel"));
+
+            var created = _submodel.SubmodelElements.CreateOrUpdate(idShortPath, submodelElement);
+            if (created.Success && created.Entity != null)
+                RegisterSubmodelElementHandler(idShortPath, submodelElementHandler);
             return created;
         }
 
@@ -546,6 +556,36 @@ namespace BaSyx.API.Components
             if (deleted.Success)
                 UnregisterSubmodelElementHandler(submodelElementId);
             return deleted;
-        }        
+        }
+
+        public IResult<ISubmodel> RetrieveSubmodel(RequestLevel level, RequestContent content, RequestExtent extent)
+        {
+            if (_submodel == null)
+                return new Result<ISubmodel>(false, new ErrorMessage("The service provider's inner Submodel object is null"));
+
+            return new Result<ISubmodel>(true, _submodel);
+        }
+
+        public IResult UpdateSubmodel(ISubmodel submodel)
+        {
+            if (_submodel == null)
+                return new Result(false, new ErrorMessage("The service provider's inner Submodel object is null"));
+
+            string idShort = submodel.IdShort ?? _submodel.IdShort;
+            Identifier identifier = submodel.Identification ?? _submodel.Identification;
+
+            Submodel tempSubmodel = new Submodel(idShort, identifier)
+            {
+                Administration = submodel.Administration ?? _submodel.Administration,
+                Category = submodel.Category ?? _submodel.Category,
+                Description = submodel.Description ?? _submodel.Description,
+                DisplayName = submodel.DisplayName ?? _submodel.DisplayName,
+                SemanticId = submodel.SemanticId ?? _submodel.SemanticId,
+                SubmodelElements = _submodel.SubmodelElements
+            };
+
+            _submodel = tempSubmodel;
+            return new Result(true);
+        }
     }
 }

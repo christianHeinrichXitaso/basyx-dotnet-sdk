@@ -46,6 +46,8 @@ namespace BaSyx.Models.Export
         public IEnumerable<IEmbeddedDataSpecification> EmbeddedDataSpecifications => throw new System.NotImplementedException();
         [XmlIgnore]
         public IReference<ISubmodel> BillOfMaterial => throw new System.NotImplementedException();
+        [XmlIgnore]
+        public LangStringSet DisplayName => throw new System.NotImplementedException();
 
         [XmlIgnore]
         IReferable IReferable.Parent { get; set; }

@@ -8,7 +8,6 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.API.AssetAdministrationShell.Extensions;
 using BaSyx.Models.Connectivity.Descriptors;
 using BaSyx.Models.Core.AssetAdministrationShell.Generics;
 using BaSyx.Models.Core.Common;
@@ -19,9 +18,11 @@ using System.Linq;
 
 namespace BaSyx.API.Components
 {
-    public class SubmodelRepositoryServiceProvider : ISubmodelRepositoryServiceProvider
+    public class SubmodelRepositoryServiceProvider : ISubmodelRepositoryServiceProvider, ISubmodelServiceProviderRegistry
     {
         public IEnumerable<ISubmodel> Submodels => GetBinding();
+
+        public ISubmodelServiceProviderRegistry SubmodelProviderRegistry => this;
 
         private Dictionary<string, ISubmodelServiceProvider> SubmodelServiceProviders { get; }
 

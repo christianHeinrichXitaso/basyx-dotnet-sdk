@@ -16,9 +16,9 @@ namespace BaSyx.API.Components
 {
     public interface ISubmodelServiceProviderRegistry
     {
-        IResult<ISubmodelDescriptor> RegisterSubmodelServiceProvider(string id, ISubmodelServiceProvider submodelServiceProvider);
-        IResult UnregisterSubmodelServiceProvider(string id);
-        IResult<ISubmodelServiceProvider> GetSubmodelServiceProvider(string id);
+        IResult<ISubmodelDescriptor> RegisterSubmodelServiceProvider(string submodelIdentifier, ISubmodelServiceProvider submodelServiceProvider);
+        IResult UnregisterSubmodelServiceProvider(string submodelIdentifier);
+        IResult<ISubmodelServiceProvider> GetSubmodelServiceProvider(string submodelIdentifier);
         IResult<IEnumerable<ISubmodelServiceProvider>> GetSubmodelServiceProviders();
     }
 }

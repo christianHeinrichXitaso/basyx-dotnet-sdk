@@ -8,7 +8,6 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.API.AssetAdministrationShell.Extensions;
 using BaSyx.Models.Connectivity.Descriptors;
 using BaSyx.Models.Core.AssetAdministrationShell.Generics;
 using BaSyx.Models.Core.Common;
@@ -19,9 +18,11 @@ using System.Linq;
 
 namespace BaSyx.API.Components
 {
-    public class AssetAdministrationShellRepositoryServiceProvider : IAssetAdministrationShellRepositoryServiceProvider
+    public class AssetAdministrationShellRepositoryServiceProvider : IAssetAdministrationShellRepositoryServiceProvider, IAssetAdministrationShellServiceProviderRegistry
     {
         public IEnumerable<IAssetAdministrationShell> AssetAdministrationShells => GetBinding();
+
+        public IAssetAdministrationShellServiceProviderRegistry ShellProviderRegistry => this;
 
         private Dictionary<string, IAssetAdministrationShellServiceProvider> AssetAdministrationShellServiceProviders { get; }
 

@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
 * Copyright (c) 2020, 2021 Robert Bosch GmbH
 * Author: Constantin Ziesche (constantin.ziesche@bosch.com)
 *
@@ -8,12 +8,14 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Models.Connectivity.Descriptors;
 using BaSyx.Models.Core.AssetAdministrationShell.Generics;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace BaSyx.API.Components
+namespace BaSyx.Models.Core.AssetAdministrationShell.Implementations
 {
-    public interface IAssetAdministrationShellRepositoryServiceProvider : IServiceProvider<IEnumerable<IAssetAdministrationShell>, IAssetAdministrationShellRepositoryDescriptor>, IAssetAdministrationShellRepository, IAssetAdministrationShellServiceProviderRegistry
-    { }
+    public class AssetInformation : IAssetInformation
+    {
+    }
 }

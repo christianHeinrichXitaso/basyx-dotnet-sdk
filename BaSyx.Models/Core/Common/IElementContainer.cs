@@ -17,21 +17,56 @@ namespace BaSyx.Models.Core.Common
 {
     public interface ICrudContainer<TIdentifier, TElement> : ICollection<TElement> where TElement : IReferable, IModelElement
     {
-        IResult<TElement> Retrieve(TIdentifier id);
-
-        IResult<T> Retrieve<T>(TIdentifier id) where T : class, TElement;
+        /// <summary>
+        /// Retrieves an element from the container.
+        /// </summary>
+        /// <param name="idShortPath">IdShort path to the submodel element (dot-separated)</param>
+        /// <returns></returns>
+        IResult<TElement> Retrieve(TIdentifier idShortPath);
+        /// <summary>
+        /// Retrieves an element from the container and performs a cast.
+        /// </summary>
+        /// <typeparam name="T">The type to cast to</typeparam>
+        /// <param name="idShortPath">IdShort path to the submodel element (dot-separated)</param>
+        /// <returns></returns>
+        IResult<T> Retrieve<T>(TIdentifier idShortPath) where T : class, TElement;
 
         IResult<IQueryableElementContainer<T>> RetrieveAll<T>() where T : class, IReferable, IModelElement;
 
         IResult<IQueryableElementContainer<T>> RetrieveAll<T>(Predicate<T> predicate) where T : class, IReferable, IModelElement;
-
-        IResult<TElement> CreateOrUpdate(TIdentifier id, TElement element);
-
+        /// <summary>
+        /// Creates a new or updates an existing element in the container. No conflict detection here.
+        /// </summary>
+        /// <param name="idShortPath">IdShort path to the submodel element (dot-separated)</param>
+        /// <param name="element">The element to create or update</param>
+        /// <returns></returns>
+        IResult<TElement> CreateOrUpdate(TIdentifier idShortPath, TElement element);
+        /// <summary>
+        /// Creates a new element in the container. Detects already existing elements.
+        /// </summary>
+        /// <param name="element">The element to create</param>
+        /// <returns></returns>
         IResult<TElement> Create(TElement element);
-
-        IResult<TElement> Update(TIdentifier id, TElement element);
-
-        IResult Delete(TIdentifier id);
+        /// <summary>
+        /// Creates a new element in the container. Detects already existing elements.
+        /// </summary>
+        /// <param name="idShortPath">IdShort path to the submodel element (dot-separated)</param>
+        /// <param name="element">The element to create</param>
+        /// <returns></returns>
+        IResult<TElement> Create(TIdentifier idShortPath, TElement element);
+        /// <summary>
+        /// Updates an existing element in the container. If it does not exist, it throws an error.
+        /// </summary>
+        /// <param name="idShortPath">IdShort path to the submodel element (dot-separated)</param>
+        /// <param name="element">The element to update</param>
+        /// <returns></returns>
+        IResult<TElement> Update(TIdentifier idShortPath, TElement element);
+        /// <summary>
+        /// Deletes an element in the container.
+        /// </summary>
+        /// <param name="idShortPath">IdShort path to the submodel element (dot-separated)</param>
+        /// <returns></returns>
+        IResult Delete(TIdentifier idShortPath);
     }
 
     public interface IElementContainer<TElement> : ICrudContainer<string, TElement> where TElement : IReferable, IModelElement

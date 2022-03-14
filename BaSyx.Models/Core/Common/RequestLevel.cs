@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
 * Copyright (c) 2020, 2021 Robert Bosch GmbH
 * Author: Constantin Ziesche (constantin.ziesche@bosch.com)
 *
@@ -8,10 +8,15 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.API.Components;
-using BaSyx.Models.Core.AssetAdministrationShell.Generics;
+using System.Runtime.Serialization;
 
-namespace BaSyx.API.AssetAdministrationShell
+namespace BaSyx.Models.Core.Common
 {
-    public delegate void EventDelegate(ISubmodelServiceProvider submodelServiceProvider, IEventMessage eventMessage);
+    public enum RequestLevel : int
+    {
+        [EnumMember(Value = "deep")]
+        Deep = 0,
+        [EnumMember(Value = "core")]
+        Core = 1
+    }
 }

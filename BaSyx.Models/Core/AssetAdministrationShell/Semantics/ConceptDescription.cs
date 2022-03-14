@@ -29,6 +29,7 @@ namespace BaSyx.Models.Core.AssetAdministrationShell.Semantics
         public string Category { get; set; }
 
         public LangStringSet Description { get; set; }
+        public LangStringSet DisplayName { get; set; }
 
         public IReferable Parent { get; set; }
 
