@@ -111,23 +111,7 @@ namespace BaSyx.Utils.Client.Http
 
         public virtual IResult<HttpResponseMessage> SendRequest(HttpRequestMessage message, CancellationToken ct)
         {
-            try
-            {
-                HttpResponseMessage response = HttpClient.SendAsync(message, ct).Result;
-                return new Result<HttpResponseMessage>(true, response);
-            }
-            catch (TimeoutException)
-            {
-                return new Result<HttpResponseMessage>(false, new Message(MessageType.Error, "Error while sending the request: Timeout"));
-            }
-            catch (OperationCanceledException)
-            {
-                return new Result<HttpResponseMessage>(false, new Message(MessageType.Error, "Request canceled"));
-            }
-            catch (Exception e)
-            {
-                return new Result<HttpResponseMessage>(e);
-            }
+            return SendRequestAsync(message, ct).GetAwaiter().GetResult();
         }
 
         public virtual async Task<IResult<HttpResponseMessage>> SendRequestAsync(HttpRequestMessage message, CancellationToken ct)
@@ -202,12 +186,16 @@ namespace BaSyx.Utils.Client.Http
 
         public virtual IResult EvaluateResponse(IResult result, HttpResponseMessage response)
         {
-            List<IMessage> messageList = new List<IMessage>();
-            messageList.AddRange(result.Messages);
+            return EvaluateResponseAsync(result, response).GetAwaiter().GetResult();
+        }
+
+        public async virtual Task<IResult> EvaluateResponseAsync(IResult result, HttpResponseMessage response)
+        {
+            List<IMessage> messageList = new List<IMessage>(result.Messages);
 
             if (response != null)
             {
-                byte[] responseByteArray = response.Content.ReadAsByteArrayAsync().Result;
+                byte[] responseByteArray = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {
                     messageList.Add(new Message(MessageType.Information, response.ReasonPhrase, ((int)response.StatusCode).ToString()));
@@ -229,12 +217,16 @@ namespace BaSyx.Utils.Client.Http
 
         public virtual IResult<T> EvaluateResponse<T>(IResult result, HttpResponseMessage response)
         {
-            List<IMessage> messageList = new List<IMessage>();
-            messageList.AddRange(result.Messages);
+            return EvaluateResponseAsync<T>(result, response).GetAwaiter().GetResult();
+        }
+
+        public virtual async Task<IResult<T>> EvaluateResponseAsync<T>(IResult result, HttpResponseMessage response)
+        {
+            List<IMessage> messageList = new List<IMessage>(result.Messages);
 
             if (response != null)
             {
-                string responseString = response.Content.ReadAsStringAsync().Result;
+                string responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {
                     try
