@@ -64,6 +64,45 @@ namespace BaSyx.Utils.Extensions
             return Encoding.UTF8.GetString(bytes);           
         }
 
+        /// <summary>
+        /// Encodes a string to a Base64UrlEncoded string (UTF8)
+        /// </summary>
+        /// <param name="toEncode">String to encode</param>
+        /// <returns></returns>
+        public static string Base64UrlEncode(this string toEncode)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(toEncode);
+            int outputLength = GetMinimalOutputArrayLength(bytes.Length);
+            char[] outArray = new char[outputLength];
+            int count = Convert.ToBase64CharArray(bytes, 0, bytes.Length, outArray, 0);
+
+            for (var i = 0; i < count; i++)
+            {
+                var ch = outArray[i];
+                if (ch == '+')
+                {
+                    outArray[i] = '-';
+                }
+                else if (ch == '/')
+                {
+                    outArray[i] = '_';
+                }
+                else if (ch == '=')
+                {
+                    break;
+                }
+            }
+
+            string encoded = new string(outArray);
+            return encoded;
+        }
+
+        private static int GetMinimalOutputArrayLength(int inputLength)
+        {
+            var blocks = checked(inputLength + 2) / 3;
+            return checked(blocks * 4);
+        }
+
         public static byte[] GetBytes(string base64EncodedString)
         {
             byte[] bytes = Convert.FromBase64String(base64EncodedString);
