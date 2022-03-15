@@ -103,7 +103,7 @@ namespace BaSyx.Utils.Extensions
             return checked(blocks * 4);
         }
 
-        public static byte[] GetBytes(string base64EncodedString)
+        public static byte[] GetBytesFromBase64String(string base64EncodedString)
         {
             byte[] bytes = Convert.FromBase64String(base64EncodedString);
             return bytes;
