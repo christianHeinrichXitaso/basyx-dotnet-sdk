@@ -10,18 +10,15 @@
 *******************************************************************************/
 using BaSyx.Utils.Assembly;
 using BaSyx.Utils.FileSystem;
-using BaSyx.Utils.Settings;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using XSerializer;
 
 namespace BaSyx.Utils.Settings
 {
@@ -127,10 +124,10 @@ namespace BaSyx.Utils.Settings
             {
                 Settings settings = null;
 
-                IXSerializer serializer = XSerializer.XmlSerializer.Create(settingsType);
+                System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(settingsType);
                 string settingsXml = File.ReadAllText(filePath);
-
-                settings = (Settings)serializer.Deserialize(settingsXml);
+                using(FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                    settings = (Settings)serializer.Deserialize(stream);
 
                 if (settings != null)
                 {
@@ -173,9 +170,9 @@ namespace BaSyx.Utils.Settings
         {
             try
             {
-                IXSerializer serializer = XSerializer.XmlSerializer.Create(settingsType);
-                string settingsXmlContent = serializer.Serialize(this);
-                File.WriteAllText(filePath, settingsXmlContent);
+                XmlSerializer serializer = new XmlSerializer(settingsType);
+                using(FileStream stream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                    serializer.Serialize(stream, this);
 
                 logger.LogInformation("Settings saved: " + filePath);
             }
