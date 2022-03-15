@@ -41,7 +41,7 @@ namespace BaSyx.Models.AdminShell
 
         public byte[] GetBytes()
         {
-            return StringOperations.GetBytes(Value);
+            return StringOperations.GetBytesFromBase64String(Value);
         }
     }
 }
