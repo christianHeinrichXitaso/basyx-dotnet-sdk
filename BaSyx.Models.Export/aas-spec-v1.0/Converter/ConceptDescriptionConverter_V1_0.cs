@@ -8,10 +8,10 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Models.Extensions.Semantics.DataSpecifications;
+using BaSyx.Models.Semantics;
 using BaSyx.Models.Export.EnvironmentDataSpecifications;
 using System;
-using BaSyx.Models.Core.AssetAdministrationShell;
+using BaSyx.Models.AdminShell;
 
 namespace BaSyx.Models.Export.Converter
 {

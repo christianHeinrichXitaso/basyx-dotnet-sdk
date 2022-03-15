@@ -8,12 +8,8 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Models.Core.AssetAdministrationShell.Generics;
-using BaSyx.Models.Core.AssetAdministrationShell.Identification;
-using BaSyx.Models.Core.AssetAdministrationShell.Implementations;
-using BaSyx.Models.Core.Attributes;
-using BaSyx.Models.Core.Common;
-using BaSyx.Utils.StringOperations;
+using BaSyx.Models.AdminShell;
+using BaSyx.Utils.Extensions;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -121,7 +117,7 @@ namespace BaSyx.Models.Extensions
             {
                 foreach (var column in columns)
                 {
-                    var info = propertyInfos.Find(p => p.Name == column.UppercaseFirst());
+                    var info = propertyInfos.Find(p => p.Name == column.ToUpperFirstChar());
                     if (info != null)
                     {
                         var value = info.GetValue(element);
@@ -207,7 +203,7 @@ namespace BaSyx.Models.Extensions
                         }
                     case ModelTypes.File:
                         {
-                            IFile file = smElement.Cast<IFile>();
+                            IFileElement file = smElement.Cast<IFileElement>();
                             jObject.Add(file.IdShort, 
                                 new JObject(
                                     new JProperty("mimeType", file.MimeType), 

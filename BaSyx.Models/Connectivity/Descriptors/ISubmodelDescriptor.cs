@@ -8,10 +8,9 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Models.Core.AssetAdministrationShell.Semantics;
-using BaSyx.Models.Core.Common;
+using BaSyx.Models.AdminShell;
 
-namespace BaSyx.Models.Connectivity.Descriptors
+namespace BaSyx.Models.Connectivity
 {
     public interface ISubmodelDescriptor : IServiceDescriptor, IHasSemantics, IModelElement
     { }

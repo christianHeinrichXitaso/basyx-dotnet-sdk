@@ -13,9 +13,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
-using BaSyx.Models.Core.AssetAdministrationShell.Identification;
-using BaSyx.Models.Core.AssetAdministrationShell.Generics;
-using BaSyx.Utils.FileHandling;
+using BaSyx.Models.AdminShell;
+using BaSyx.Utils.FileSystem;
 using Microsoft.Extensions.Logging;
 
 namespace BaSyx.Models.Export
@@ -373,12 +372,12 @@ namespace BaSyx.Models.Export
             return null;
         }
 
-        public void AddFilesToAASX(Dictionary<string, IFile> fileDestinationMapping, CompressionOption compressionOption = CompressionOption.Maximum)
+        public void AddFilesToAASX(Dictionary<string, IFileElement> fileDestinationMapping, CompressionOption compressionOption = CompressionOption.Maximum)
         {
             for (int i = 0; i < fileDestinationMapping.Count; i++)
             {
                 string filePath = fileDestinationMapping.ElementAt(i).Key;
-                IFile file = fileDestinationMapping.ElementAt(i).Value;
+                IFileElement file = fileDestinationMapping.ElementAt(i).Value;
 
                 string relativeDestination;
                 if (!file.Value.StartsWith(AASX_FOLDER))

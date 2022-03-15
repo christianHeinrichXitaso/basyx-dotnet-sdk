@@ -8,7 +8,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Models.Core.AssetAdministrationShell.Identification;
+using BaSyx.Models.AdminShell;
 using System.Collections.Generic;
 
 namespace BaSyx.Models.Connectivity

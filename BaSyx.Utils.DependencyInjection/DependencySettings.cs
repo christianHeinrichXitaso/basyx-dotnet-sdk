@@ -8,7 +8,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Utils.AssemblyHandling;
+using BaSyx.Utils.Assembly;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
@@ -44,9 +44,9 @@ namespace BaSyx.Utils.Settings.Types
             public ServiceLifetime ServiceLifetime { get; set; }
         }
       
-        public IServiceCollection GetServiceCollection(List<Assembly> externalAssemblies = null)
+        public IServiceCollection GetServiceCollection(List<System.Reflection.Assembly> externalAssemblies = null)
         {
-            List<Assembly> assemblies = externalAssemblies ?? AssemblyUtils.GetLoadedAssemblies();
+            List<System.Reflection.Assembly> assemblies = externalAssemblies ?? AssemblyUtils.GetLoadedAssemblies();
            
             if (DependencyCollection?.Dependencies?.Count > 0)
             {
@@ -58,7 +58,7 @@ namespace BaSyx.Utils.Settings.Types
                     {
                         try
                         {
-                            Assembly assembly = Assembly.LoadFrom(dllPath);
+                            System.Reflection.Assembly assembly = System.Reflection.Assembly.LoadFrom(dllPath);
                             if (!assemblies.Contains(assembly))
                                 assemblies.Add(assembly);
                         }

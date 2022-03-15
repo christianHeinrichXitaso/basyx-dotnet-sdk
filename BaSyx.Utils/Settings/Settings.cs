@@ -8,9 +8,9 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Utils.AssemblyHandling;
-using BaSyx.Utils.FileHandling;
-using BaSyx.Utils.Settings.Sections;
+using BaSyx.Utils.Assembly;
+using BaSyx.Utils.FileSystem;
+using BaSyx.Utils.Settings;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -72,7 +72,7 @@ namespace BaSyx.Utils.Settings
             string[] files = Directory.GetFiles(ExecutingDirectory, "*Settings.xml", SearchOption.TopDirectoryOnly);
             if (files?.Length > 0)
             {
-                List<Assembly> assemblies = AssemblyUtils.GetLoadedAssemblies();
+                List<System.Reflection.Assembly> assemblies = AssemblyUtils.GetLoadedAssemblies();
 
                 for (int i = 0; i < files.Length; i++)
                 {

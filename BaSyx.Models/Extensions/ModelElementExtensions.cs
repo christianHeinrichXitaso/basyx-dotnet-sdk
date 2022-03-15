@@ -8,8 +8,8 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Models.Core.Common;
-using BaSyx.Utils.JsonHandling;
+using BaSyx.Models.AdminShell;
+using BaSyx.Utils.Json;
 using Newtonsoft.Json;
 
 namespace BaSyx.Models.Extensions

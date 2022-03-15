@@ -8,15 +8,10 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Models.Core.AssetAdministrationShell.Generics;
-using BaSyx.Models.Core.AssetAdministrationShell.Implementations;
-using BaSyx.Models.Core.AssetAdministrationShell.Identification;
+using BaSyx.Models.AdminShell;
 using BaSyx.Models.Export.Converter;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using BaSyx.Models.Core.AssetAdministrationShell.Semantics;
-using BaSyx.Models.Core.Common;
 using Microsoft.Extensions.Logging;
 
 namespace BaSyx.Models.Export.EnvironmentSubmodelElements
@@ -61,7 +56,7 @@ namespace BaSyx.Models.Export.EnvironmentSubmodelElements
             }
             else if (modelType == ModelType.File && envSubmodelElement is File_V1_0 castedFile)
             {
-                File file = new File(castedFile.IdShort)
+                FileElement file = new FileElement(castedFile.IdShort)
                 {
                     MimeType = castedFile.MimeType,
                     Value = castedFile.Value
@@ -221,7 +216,7 @@ namespace BaSyx.Models.Export.EnvironmentSubmodelElements
                     Value = castedBlob.Value,
                     MimeType = castedBlob.MimeType
                 };
-            else if (modelType == ModelType.File && element is IFile castedFile)
+            else if (modelType == ModelType.File && element is IFileElement castedFile)
                 environmentSubmodelElement.submodelElement = new File_V1_0(submodelElementType)
                 {
                     MimeType = castedFile.MimeType,

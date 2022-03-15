@@ -8,7 +8,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Models.Extensions.Semantics.DataSpecifications;
+using BaSyx.Models.Semantics;
 using BaSyx.Models.Export.EnvironmentDataSpecifications;
 using System;
 
@@ -37,7 +37,7 @@ namespace BaSyx.Models.Export.Converter
                 Value = environmentDataSpecification.Value,
                 ValueFormat = environmentDataSpecification.ValueFormat,
                 ValueId = environmentDataSpecification.ValueId?.ToReference_V2_0(),
-                ValueList = environmentDataSpecification.ValueList?.ConvertAll(c => new Extensions.Semantics.DataSpecifications.ValueReferencePair()
+                ValueList = environmentDataSpecification.ValueList?.ConvertAll(c => new Semantics.ValueReferencePair()
                 {
                     Value = c.Value,
                     ValueId = c.ValueId?.ToReference_V2_0()

@@ -8,14 +8,10 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Models.Core.AssetAdministrationShell.Generics;
-using BaSyx.Models.Core.AssetAdministrationShell.Implementations;
-using BaSyx.Models.Core.AssetAdministrationShell.Identification;
-using BaSyx.Models.Core.AssetAdministrationShell.Semantics;
-using BaSyx.Models.Core.Common;
+using BaSyx.Models.AdminShell;
 using BaSyx.Models.Export.Converter;
 using BaSyx.Models.Export.EnvironmentSubmodelElements;
-using BaSyx.Models.Extensions.Semantics.DataSpecifications;
+using BaSyx.Models.Semantics;
 using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -28,7 +24,7 @@ using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using File = BaSyx.Models.Core.AssetAdministrationShell.Implementations.File;
+using FileElement = BaSyx.Models.AdminShell.FileElement;
 using Microsoft.Extensions.Logging;
 
 namespace BaSyx.Models.Export
@@ -81,7 +77,7 @@ namespace BaSyx.Models.Export
 
         [IgnoreDataMember]
         [XmlIgnore]
-        public Dictionary<string, IFile> SupplementalFiles;
+        public Dictionary<string, IFileElement> SupplementalFiles;
 
         private string ContentRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
@@ -124,7 +120,7 @@ namespace BaSyx.Models.Export
             Submodels = new List<ISubmodel>();
             Assets = new List<IAsset>();
             ConceptDescriptions = new List<IConceptDescription>();
-            SupplementalFiles = new Dictionary<string, IFile>();
+            SupplementalFiles = new Dictionary<string, IFileElement>();
 
             EnvironmentAssetAdministrationShells = new List<EnvironmentAssetAdministrationShell_V1_0>();
             EnvironmentAssets = new List<EnvironmentAsset_V1_0>();
@@ -242,7 +238,7 @@ namespace BaSyx.Models.Export
         {
             foreach (var smElement in submodelElements)
             {
-                if (smElement is File file)
+                if (smElement is FileElement file)
                 {
                     string filePath = ContentRoot + file.Value.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
                     if (System.IO.File.Exists(filePath))

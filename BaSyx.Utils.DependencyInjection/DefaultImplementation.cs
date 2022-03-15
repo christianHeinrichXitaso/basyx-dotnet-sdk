@@ -8,13 +8,8 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Models.Connectivity.Descriptors;
-using BaSyx.Models.Core.AssetAdministrationShell.Generics;
-using BaSyx.Models.Core.AssetAdministrationShell.Implementations;
-using BaSyx.Models.Core.AssetAdministrationShell.Identification;
-using BaSyx.Models.Core.AssetAdministrationShell.Semantics;
-using BaSyx.Models.Core.AssetAdministrationShell.Views;
-using BaSyx.Models.Core.Common;
+using BaSyx.Models.Connectivity;
+using BaSyx.Models.AdminShell;
 using BaSyx.Utils.ResultHandling;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -62,7 +57,7 @@ namespace BaSyx.Utils.DependencyInjection
             services.AddTransient<IRelationshipElement, RelationshipElement>();
             services.AddTransient<IAnnotatedRelationshipElement, AnnotatedRelationshipElement>();
             services.AddTransient<IReferenceElement, ReferenceElement>();
-            services.AddTransient<IFile, File>();
+            services.AddTransient<IFileElement, FileElement>();
             services.AddTransient<IBlob, Blob>();
 
             services.AddTransient<IConceptDictionary, ConceptDictionary>();

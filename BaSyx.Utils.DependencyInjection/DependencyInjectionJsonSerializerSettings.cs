@@ -8,7 +8,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
-using BaSyx.Utils.JsonHandling;
+using BaSyx.Utils.Json;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 

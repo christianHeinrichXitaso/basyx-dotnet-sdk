@@ -12,7 +12,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace BaSyx.Utils.Settings.Types
+namespace BaSyx.Utils.Settings
 {
     public class ServerSettings : Settings<ServerSettings>
     {

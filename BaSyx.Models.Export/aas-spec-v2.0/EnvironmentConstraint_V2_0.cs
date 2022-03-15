@@ -9,7 +9,7 @@
 * SPDX-License-Identifier: EPL-2.0
 *******************************************************************************/
 
-using BaSyx.Models.Core.Common;
+using BaSyx.Models.AdminShell;
 using System.Xml.Serialization;
 
 namespace BaSyx.Models.Export
