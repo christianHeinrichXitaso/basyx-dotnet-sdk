@@ -8,7 +8,9 @@
 *
 * SPDX-License-Identifier: MIT
 *******************************************************************************/
+using BaSyx.API.Http;
 using BaSyx.Models.Connectivity;
+using BaSyx.Utils.Extensions;
 using BaSyx.Utils.Network;
 using BaSyx.Utils.Settings;
 using Microsoft.Extensions.Logging;
@@ -146,8 +148,8 @@ namespace BaSyx.API.ServiceProvider
             foreach (var endpoint in endpoints)
             {
                 string epAddress = endpoint.Address;
-                if (!epAddress.EndsWith("/shells"))
-                    epAddress = epAddress + (epAddress.EndsWith("/") ? "" : "/") + "shells";
+                if (!epAddress.EndsWith(AssetAdministrationShellRepositoryRoutes.SHELLS))
+                    epAddress = epAddress.TrimEnd('/') + AssetAdministrationShellRepositoryRoutes.SHELLS;
 
                 repositoryEndpoints.Add(EndpointFactory.CreateEndpoint(endpoint.Type, epAddress, endpoint.Security));
             }
@@ -159,7 +161,7 @@ namespace BaSyx.API.ServiceProvider
                 List<IEndpoint> aasEndpoints = new List<IEndpoint>();
                 foreach (var endpoint in repositoryEndpoints)
                 {
-                    var ep = EndpointFactory.CreateEndpoint(endpoint.Type, GetAssetAdministrationShellEndpoint(endpoint, aasDescriptor.IdShort), endpoint.Security);
+                    var ep = EndpointFactory.CreateEndpoint(endpoint.Type, GetAssetAdministrationShellEndpoint(endpoint, aasDescriptor.Identification.Id), endpoint.Security);
                     aasEndpoints.Add(ep);
                 }
                 aasDescriptor.AddEndpoints(aasEndpoints);
@@ -169,7 +171,7 @@ namespace BaSyx.API.ServiceProvider
                     List<IEndpoint> submodelEndpoints = new List<IEndpoint>();
                     foreach (var endpoint in aasEndpoints)
                     {
-                        var ep = EndpointFactory.CreateEndpoint(endpoint.Type, GetSubmodelEndpoint(endpoint, submodelDescriptor.IdShort), endpoint.Security);
+                        var ep = EndpointFactory.CreateEndpoint(endpoint.Type, GetSubmodelEndpoint(endpoint, submodelDescriptor.Identification.Id), endpoint.Security);
                         submodelEndpoints.Add(ep);
                     }
                     submodelDescriptor.AddEndpoints(submodelEndpoints);
@@ -183,8 +185,8 @@ namespace BaSyx.API.ServiceProvider
             foreach (var endpoint in endpoints)
             {
                 string epAddress = endpoint.Address;
-                if (!epAddress.EndsWith("/submodels"))
-                    epAddress = epAddress + (epAddress.EndsWith("/") ? "" : "/") + "submodels";
+                if (!epAddress.EndsWith(SubmodelRepositoryRoutes.SUBMODELS))
+                    epAddress = epAddress.TrimEnd('/') + SubmodelRepositoryRoutes.SUBMODELS;
 
                 repositoryEndpoints.Add(EndpointFactory.CreateEndpoint(endpoint.Type, epAddress, endpoint.Security));
             }
@@ -196,7 +198,7 @@ namespace BaSyx.API.ServiceProvider
                 List<IEndpoint> submodelEndpoints = new List<IEndpoint>();
                 foreach (var endpoint in repositoryEndpoints)
                 {
-                    var ep = EndpointFactory.CreateEndpoint(endpoint.Type, GetSubmodelInRepositoryEndpoint(endpoint, submodelDescriptor.IdShort), endpoint.Security);
+                    var ep = EndpointFactory.CreateEndpoint(endpoint.Type, GetSubmodelInRepositoryEndpoint(endpoint, submodelDescriptor.Identification.Id), endpoint.Security);
                     submodelEndpoints.Add(ep);
                 }
                 submodelDescriptor.AddEndpoints(submodelEndpoints);                
@@ -209,8 +211,8 @@ namespace BaSyx.API.ServiceProvider
             foreach (var endpoint in endpoints)
             {
                 string epAddress = endpoint.Address;
-                if (!epAddress.EndsWith("/aas"))
-                    epAddress = epAddress + (epAddress.EndsWith("/") ? "" : "/") + "aas";
+                if (!epAddress.EndsWith(AssetAdministrationShellRoutes.AAS))
+                    epAddress = epAddress.TrimEnd('/') + AssetAdministrationShellRoutes.AAS;
 
                 aasEndpoints.Add(EndpointFactory.CreateEndpoint(endpoint.Type, epAddress, endpoint.Security));
             }
@@ -222,7 +224,7 @@ namespace BaSyx.API.ServiceProvider
                 List<IEndpoint> spEndpoints = new List<IEndpoint>();
                 foreach (var endpoint in aasEndpoints)
                 {
-                    var ep = EndpointFactory.CreateEndpoint(endpoint.Type, GetSubmodelEndpoint(endpoint, submodel.IdShort), endpoint.Security);
+                    var ep = EndpointFactory.CreateEndpoint(endpoint.Type, GetSubmodelEndpoint(endpoint, submodel.Identification.Id), endpoint.Security);
                     spEndpoints.Add(ep);
                 }
                 submodel.AddEndpoints(spEndpoints);
@@ -235,8 +237,8 @@ namespace BaSyx.API.ServiceProvider
             foreach (var endpoint in endpoints)
             {
                 string epAddress = endpoint.Address;
-                if (!epAddress.EndsWith("/submodel"))
-                    epAddress = epAddress + (epAddress.EndsWith("/") ? "" : "/") + "submodel";
+                if (!epAddress.EndsWith(SubmodelRoutes.SUBMODEL))
+                    epAddress = epAddress.TrimEnd('/') + SubmodelRoutes.SUBMODEL;
 
                 submodelEndpoints.Add(EndpointFactory.CreateEndpoint(endpoint.Type, epAddress, endpoint.Security));
             }
@@ -247,28 +249,34 @@ namespace BaSyx.API.ServiceProvider
         public static string GetSubmodelInRepositoryEndpoint(IEndpoint endpoint, string submodelId)
         {
             string epAddress = endpoint.Address;
-            if (!epAddress.EndsWith("/submodels"))
-                epAddress = epAddress + (epAddress.EndsWith("/") ? "" : "/") + "submodels";
+            if (!epAddress.EndsWith(SubmodelRepositoryRoutes.SUBMODELS))
+                epAddress = epAddress.TrimEnd('/') + SubmodelRepositoryRoutes.SUBMODELS;
 
-            return epAddress + "/" + submodelId + "/submodel";
+            submodelId = StringOperations.Base64UrlEncode(submodelId);
+
+            return epAddress + "/" + submodelId + SubmodelRoutes.SUBMODEL;
         }
 
         public static string GetSubmodelEndpoint(IEndpoint endpoint, string submodelId)
         {
             string epAddress = endpoint.Address;
-            if (!epAddress.EndsWith("/aas"))
-                epAddress = epAddress + (epAddress.EndsWith("/") ? "" : "/") + "aas";
+            if (!epAddress.EndsWith(AssetAdministrationShellRoutes.AAS))
+                epAddress = epAddress.TrimEnd('/') + AssetAdministrationShellRoutes.AAS;
 
-            return epAddress + "/submodels/" + submodelId + "/submodel";
+            submodelId = StringOperations.Base64UrlEncode(submodelId);
+
+            return epAddress + SubmodelRepositoryRoutes.SUBMODELS + "/" + submodelId + SubmodelRoutes.SUBMODEL;
         }
 
         public static string GetAssetAdministrationShellEndpoint(IEndpoint endpoint, string aasId)
         {
             string epAddress = endpoint.Address;
-            if (!epAddress.EndsWith("/shells"))
-                epAddress = epAddress + (epAddress.EndsWith("/") ? "" : "/") + "shells";
+            if (!epAddress.EndsWith(AssetAdministrationShellRepositoryRoutes.SHELLS))
+                epAddress = epAddress.TrimEnd('/') + AssetAdministrationShellRepositoryRoutes.SHELLS;
 
-            return epAddress + "/" + aasId + "/aas";
+            aasId = StringOperations.Base64UrlEncode(aasId);
+
+            return epAddress + "/" + aasId + AssetAdministrationShellRoutes.AAS;
         }
     }
 }
