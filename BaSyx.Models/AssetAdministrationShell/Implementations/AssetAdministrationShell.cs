@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using BaSyx.Models.Extensions;
+using System.Linq;
 
 namespace BaSyx.Models.AdminShell
 {
@@ -21,24 +22,34 @@ namespace BaSyx.Models.AdminShell
         public IAsset Asset { get; set; }
         public IAssetInformation AssetInformation { get; set; }
         public IElementContainer<ISubmodel> Submodels { get; set; }
+
+        private List<IReference<ISubmodel>> _submodelRefs;
         public IEnumerable<IReference<ISubmodel>> SubmodelReferences 
         { 
             get 
             {
-                List<IReference<ISubmodel>> references = new List<IReference<ISubmodel>>();
-                foreach (var submodel in Submodels)
+                if (_submodelRefs == null 
+                    || _submodelRefs.Count < Submodels.Count
+                    || (Submodels.Count > 0 && Submodels.ToList().TrueForAll(sm => _submodelRefs.Any(smRef => sm.Identification.Id == smRef.First.Value))))
                 {
-                    var reference = submodel.CreateReference();
-                    references.Add(reference);
+                    _submodelRefs = new List<IReference<ISubmodel>>();
+                    foreach (var submodel in Submodels)
+                    {
+                        var reference = submodel.CreateReference();
+                        _submodelRefs.Add(reference);
+                    }
                 }
-                return references;
+                return _submodelRefs;
+            }
+            set
+            {
+                _submodelRefs = value.ToList();
             }
         }
         public IReference<IAssetAdministrationShell> DerivedFrom { get; set; }     
         public IElementContainer<IView> Views { get; set; }
         public ModelType ModelType => ModelType.AssetAdministrationShell;
         public IEnumerable<IEmbeddedDataSpecification> EmbeddedDataSpecifications { get; }
-        public IElementContainer<IConceptDictionary> ConceptDictionaries { get; set; }
         public IConceptDescription ConceptDescription { get; set; }
      
 
@@ -48,7 +59,6 @@ namespace BaSyx.Models.AdminShell
             Submodels = new ElementContainer<ISubmodel>(this);
             Views = new ElementContainer<IView>(this);
             MetaData = new Dictionary<string, string>();
-            ConceptDictionaries = new ElementContainer<IConceptDictionary>(this);
             EmbeddedDataSpecifications = new List<IEmbeddedDataSpecification>();
         }
     }
