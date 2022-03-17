@@ -168,6 +168,7 @@ namespace BaSyx.API.ServiceProvider
 
             AssetAdministrationShell tempShell = new AssetAdministrationShell(idShort, identifier)
             {
+                Asset = aas.Asset ?? _assetAdministrationShell.Asset,
                 Administration = aas.Administration ?? _assetAdministrationShell.Administration,
                 DerivedFrom = aas.DerivedFrom ?? _assetAdministrationShell.DerivedFrom,
                 Category = aas.Category ?? _assetAdministrationShell.Category,
