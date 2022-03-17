@@ -83,7 +83,7 @@ namespace BaSyx.API.ServiceProvider
             return submodelClient.RetrieveSubmodel();
         }
         
-        public IResult<InvocationResponse> InvokeOperation(string operationId, InvocationRequest invocationRequest)
+        public IResult<InvocationResponse> InvokeOperation(string operationId, InvocationRequest invocationRequest, bool async)
         {
             return submodelClient.InvokeOperation(operationId, invocationRequest);
         }
@@ -132,11 +132,6 @@ namespace BaSyx.API.ServiceProvider
         public IResult DeleteSubmodelElement(string submodelElementId)
         {
             return submodelClient.DeleteSubmodelElement(submodelElementId);
-        }
-
-        public IResult<CallbackResponse> InvokeOperationAsync(string operationId, InvocationRequest invocationRequest)
-        {
-            return submodelClient.InvokeOperationAsync(operationId, invocationRequest);
         }
 
         public IResult<InvocationResponse> GetInvocationResult(string operationId, string requestId)
