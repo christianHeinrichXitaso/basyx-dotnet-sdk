@@ -220,6 +220,14 @@ namespace BaSyx.API.ServiceProvider
                 eventDelegates[pathToEvent] = eventDelegate;
         }
 
+        public IResult<InvocationResponse> InvokeOperation(string pathToOperation, InvocationRequest invocationRequest, bool async)
+        {
+           if(async)
+                return InvokeOperationServerSide(pathToOperation, invocationRequest);
+           else
+                return InvokeOperation(pathToOperation, invocationRequest);
+        }
+
         public IResult<InvocationResponse> InvokeOperation(string pathToOperation, InvocationRequest invocationRequest)
         {
             if (_submodel == null)
@@ -308,12 +316,12 @@ namespace BaSyx.API.ServiceProvider
             return variables;
         }
 
-        public IResult<CallbackResponse> InvokeOperationAsync(string idShortPath, InvocationRequest invocationRequest)
+        public IResult<InvocationResponse> InvokeOperationServerSide(string idShortPath, InvocationRequest invocationRequest)
         {
             if (_submodel == null)
-                return new Result<CallbackResponse>(false, new NotFoundMessage("Submodel"));
+                return new Result<InvocationResponse>(false, new NotFoundMessage("Submodel"));
             if (invocationRequest == null)
-                return new Result<CallbackResponse>(new ArgumentNullException(nameof(invocationRequest)));
+                return new Result<InvocationResponse>(new ArgumentNullException(nameof(invocationRequest)));
 
             var operation_Retrieved = _submodel.SubmodelElements.Retrieve<IOperation>(idShortPath);
             if (operation_Retrieved.Success && operation_Retrieved.Entity != null)
@@ -324,7 +332,7 @@ namespace BaSyx.API.ServiceProvider
                 else if (operation_Retrieved.Entity.OnMethodCalled != null)
                     methodHandler = operation_Retrieved.Entity.OnMethodCalled;
                 else
-                    return new Result<CallbackResponse>(false, new NotFoundMessage($"MethodHandler for {idShortPath}"));
+                    return new Result<InvocationResponse>(false, new NotFoundMessage($"MethodHandler for {idShortPath}"));
              
                 Task invocationTask = Task.Run(async() =>
                 {
@@ -367,11 +375,11 @@ namespace BaSyx.API.ServiceProvider
                         }
                     }
                 });
-         
-                CallbackResponse callbackResponse = new CallbackResponse(invocationRequest.RequestId);
-                return new Result<CallbackResponse>(true, callbackResponse);
+
+                InvocationResponse callbackResponse = new InvocationResponse(invocationRequest.RequestId);
+                return new Result<InvocationResponse>(true, callbackResponse);
             }
-            return new Result<CallbackResponse>(operation_Retrieved);
+            return new Result<InvocationResponse>(operation_Retrieved);
         }
 
         private void SetInvocationResult(string operationId, string requestId, ref InvocationResponse invocationResponse)
