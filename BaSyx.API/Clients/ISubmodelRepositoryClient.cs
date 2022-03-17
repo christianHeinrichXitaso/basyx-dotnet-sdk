@@ -10,11 +10,22 @@
 *******************************************************************************/
 
 using BaSyx.API.Interfaces;
+using BaSyx.Models.AdminShell;
+using BaSyx.Utils.ResultHandling;
+using System.Threading.Tasks;
 
 namespace BaSyx.API.Clients
 {
     public interface ISubmodelRepositoryClient : ISubmodelRepositoryInterface
     {
-    
+        Task<IResult<ISubmodel>> CreateSubmodelAsync(ISubmodel submodel);
+
+        Task<IResult<ISubmodel>> RetrieveSubmodelAsync(string submodelIdentifier);
+
+        Task<IResult<IElementContainer<ISubmodel>>> RetrieveSubmodelsAsync();
+
+        Task<IResult> UpdateSubmodelAsync(string submodelIdentifier, ISubmodel submodel);
+
+        Task<IResult> DeleteSubmodelAsync(string submodelIdentifier);
     }
 }

@@ -9,12 +9,27 @@
 * SPDX-License-Identifier: MIT
 *******************************************************************************/
 using BaSyx.API.Interfaces;
+using BaSyx.Models.AdminShell;
+using BaSyx.Utils.ResultHandling;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BaSyx.API.Clients
 {
     public interface IAssetAdministrationShellClient : IAssetAdministrationShellInterface
     {
+        Task<IResult<IAssetAdministrationShell>> RetrieveAssetAdministrationShellAsync(RequestContent content);
 
+        Task<IResult> UpdateAssetAdministrationShellAsync(IAssetAdministrationShell aas);
+
+        Task<IResult<IAssetInformation>> RetrieveAssetInformationAsync();
+
+        Task<IResult> UpdateAssetInformationAsync(IAssetInformation assetInformation);
+
+        Task<IResult<IEnumerable<IReference<ISubmodel>>>> RetrieveAllSubmodelReferencesAsync();
+
+        Task<IResult<IReference>> CreateSubmodelReferenceAsync(IReference submodelRef);
+
+        Task<IResult> DeleteSubmodelReferenceAsync(string submodelIdentifier);
     }
 }
