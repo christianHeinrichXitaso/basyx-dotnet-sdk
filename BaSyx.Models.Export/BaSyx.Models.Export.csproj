@@ -5,16 +5,16 @@
     <Configurations>Debug;Release</Configurations>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <Authors>Constantin Ziesche</Authors>
-    <Company>Robert Bosch GmbH</Company>
+    <Company>Bosch Rexroth AG</Company>
     <Description>The official BaSyx Collection of Information Model Classes for Export</Description>
-    <Copyright>Copyright 2021 - Robert Bosch GmbH</Copyright>
-    <PackageLicenseExpression>EPL-2.0</PackageLicenseExpression>
+    <Copyright>Copyright 2022 - Bosch Rexroth AG</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://wiki.eclipse.org/BaSyx</PackageProjectUrl>
     <RepositoryUrl>https://github.com/eclipse-basyx/basyx-dotnet-sdk</RepositoryUrl>
     <PackageIcon>basyxlogo.png</PackageIcon>
     <PackageTags>BaSys BaSyx Models Export</PackageTags>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
-    <Version>1.0.0</Version>
+    <Version>2.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
