@@ -17,12 +17,12 @@ namespace BaSyx.API.Interfaces
     {
         IResult<ISubmodel> CreateSubmodel(ISubmodel submodel);
 
-        IResult<ISubmodel> RetrieveSubmodel(string submodelId);
+        IResult<ISubmodel> RetrieveSubmodel(string submodelIdentifier);
 
         IResult<IElementContainer<ISubmodel>> RetrieveSubmodels();
 
-        IResult UpdateSubmodel(string submodelId, ISubmodel submodel);
+        IResult UpdateSubmodel(string submodelIdentifier, ISubmodel submodel);
 
-        IResult DeleteSubmodel(string submodelId);
+        IResult DeleteSubmodel(string submodelIdentifier);
     }
 }

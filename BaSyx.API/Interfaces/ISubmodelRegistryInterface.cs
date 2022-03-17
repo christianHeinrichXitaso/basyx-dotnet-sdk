@@ -30,10 +30,10 @@ namespace BaSyx.API.Interfaces
         /// <summary>
         /// Updates an existing Submodel registration
         /// </summary>
-        /// <param name="submodelId">The Submodel's unique id</param>
+        /// <param name="submodelIdentifier">The Submodel's unique id</param>
         /// <param name="submodelDescriptor">The Submodel Descriptor</param>
         /// <returns>Result object with embedded Submodel Descriptor</returns>
-        IResult<ISubmodelDescriptor> UpdateSubmodelRegistration(string submodelId, ISubmodelDescriptor submodelDescriptor);
+        IResult<ISubmodelDescriptor> UpdateSubmodelRegistration(string submodelIdentifier, ISubmodelDescriptor submodelDescriptor);
 
         /// <summary>
         /// Retrieves all Submodel registrations
@@ -52,15 +52,15 @@ namespace BaSyx.API.Interfaces
         /// <summary>
         /// Retrieves the Submodel registration
         /// </summary>
-        /// <param name="submodelId">The Submodel's unique id</param>
+        /// <param name="submodelIdentifier">The Submodel's unique id</param>
         /// <returns>Result object with embedded Submodel Descriptor</returns>
-        IResult<ISubmodelDescriptor> RetrieveSubmodelRegistration(string submodelId);
+        IResult<ISubmodelDescriptor> RetrieveSubmodelRegistration(string submodelIdentifier);
 
         /// <summary>
         /// De-registers the Submodel
         /// </summary>
-        /// <param name="submodelId">The Submodel's unique id</param>
+        /// <param name="submodelIdentifier">The Submodel's unique id</param>
         /// <returns>Result object returning only the success of the operation</returns>
-        IResult DeleteSubmodelRegistration(string submodelId);
+        IResult DeleteSubmodelRegistration(string submodelIdentifier);
     }
 }
