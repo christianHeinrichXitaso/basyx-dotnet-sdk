@@ -34,20 +34,13 @@ namespace BaSyx.API.Interfaces
         IResult DeleteSubmodelElement(string idShortPath);
 
         /// <summary>
-        /// Invokes a specific Operation synchronously
+        /// Invokes a specific Operation synchronously or asynchronously
         /// </summary>
         /// <param name="idShortPath">IdShort-Path to the Operation</param>
         /// <param name="invocationRequest">Request-Parameters for the invocation</param>
+        /// <param name="async">Server-side operation execution (true = asynchronous | false (default) = synchronous)</param>
         /// <returns></returns>
-        IResult<InvocationResponse> InvokeOperation(string idShortPath, InvocationRequest invocationRequest);
-
-        /// <summary>
-        /// Invokes a specific Operation asynchronously
-        /// </summary>
-        /// <param name="idShortPath">IdShort-Path to the Operation</param>
-        /// <param name="invocationRequest">Request-Parameters for the invocation</param>
-        /// <returns></returns>
-        IResult<CallbackResponse> InvokeOperationAsync(string idShortPath, InvocationRequest invocationRequest);
+        IResult<InvocationResponse> InvokeOperation(string idShortPath, InvocationRequest invocationRequest, bool async = false);
 
         /// <summary>
         /// Returns the Invocation Result of specific Operation
