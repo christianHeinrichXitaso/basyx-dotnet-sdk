@@ -58,13 +58,5 @@ namespace BaSyx.Models.AdminShell
         /// </summary>
         [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "views")]
         IElementContainer<IView> Views { get; }
-
-        /// <summary>
-        /// An AAS max have one or more concept dictionaries assigned to it.  
-        /// The concept dictionaries typically contain only descriptions for elements that are also used within the AAS (via HasSemantics). 
-        /// </summary>
-        [Obsolete]
-        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "conceptDictionaries")]
-        IElementContainer<IConceptDictionary> ConceptDictionaries { get; }
     }
 }
