@@ -12,7 +12,9 @@ using BaSyx.Models.Connectivity;
 
 namespace BaSyx.API.ServiceProvider
 {
-    public interface IServiceProvider<TModelElement, TServiceDescriptor>
+    public interface IServiceProvider { }
+
+    public interface IServiceProvider<TModelElement, TServiceDescriptor> : IServiceProvider
         where TServiceDescriptor : IServiceDescriptor
     {
         TServiceDescriptor ServiceDescriptor { get; }
