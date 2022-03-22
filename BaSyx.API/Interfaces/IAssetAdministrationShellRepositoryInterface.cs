@@ -21,7 +21,7 @@ namespace BaSyx.API.Interfaces
 
         IResult<IElementContainer<IAssetAdministrationShell>> RetrieveAssetAdministrationShells();
 
-        IResult UpdateAssetAdministrationShell(string aasIdentifier, IAssetAdministrationShell submodel);
+        IResult UpdateAssetAdministrationShell(string aasIdentifier, IAssetAdministrationShell aas);
 
         IResult DeleteAssetAdministrationShell(string aasIdentifier);
     }
