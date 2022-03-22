@@ -137,28 +137,39 @@ namespace BaSyx.Models.Export
         public AssetAdministrationShellEnvironment_V2_0(params IAssetAdministrationShell[] assetAdministrationShells) : this()
         {
             foreach (var aas in assetAdministrationShells)
-                AddAssetAdministrationShell(aas);
+                AddAssetAdministrationShell(aas, true);
 
-            ConvertToEnvironment();
+            BuildEnvironment();
         }
 
-        public void AddAssetAdministrationShell(IAssetAdministrationShell aas)
+        public void AddAssetAdministrationShell(IAssetAdministrationShell aas, bool includeSubmodels)
         {
             AssetAdministrationShells.Add(aas);
             if (aas.Asset != null)
                 Assets.Add(aas.Asset);
-            if (aas.Submodels?.Count() > 0)
-            {
-                Submodels.AddRange(aas.Submodels.Values);
+            if (includeSubmodels && aas.Submodels?.Count() > 0)
                 foreach (var submodel in aas.Submodels.Values)
-                {
-                    ExtractAndClearConceptDescriptions(submodel.SubmodelElements);
-                    ExtractSupplementalFiles(submodel.SubmodelElements);
-                }
-            }
+                    AddSubmodel(submodel);
         }
 
-        private void ConvertToEnvironment()
+        public void AddAsset(IAsset asset)
+        {
+            Assets.Add(asset);
+        }
+
+        public void AddSubmodel(ISubmodel submodel)
+        {
+            Submodels.Add(submodel);
+            ExtractAndClearConceptDescriptions(submodel.SubmodelElements);
+            ExtractSupplementalFiles(submodel.SubmodelElements);
+        }
+
+        public void AddConceptDescription(IConceptDescription conceptDescription)
+        {
+            ConceptDescriptions.Add(conceptDescription);
+        }
+
+        public void BuildEnvironment()
         {
             foreach (var asset in Assets)
             {
