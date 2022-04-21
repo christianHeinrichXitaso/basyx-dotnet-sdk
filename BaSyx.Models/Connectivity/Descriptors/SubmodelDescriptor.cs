@@ -10,7 +10,6 @@
 *******************************************************************************/
 using BaSyx.Models.AdminShell;
 using Newtonsoft.Json;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -18,53 +17,23 @@ namespace BaSyx.Models.Connectivity
 {
 
     [DataContract]
-    public class SubmodelDescriptor : ISubmodelDescriptor
+    public class SubmodelDescriptor : Descriptor, ISubmodelDescriptor
     {
-        public Identifier Identification { get; set; }
-        public AdministrativeInformation Administration { get; set; }
-        public string IdShort { get; set; }
-        
-        public LangStringSet Description { get; set; }
-        public LangStringSet DisplayName { get; set; }
-        public IReference SemanticId { get; set; }
-        public IEnumerable<IEndpoint> Endpoints { get; private set; }
-
-        [IgnoreDataMember]
-        public IReferable Parent { get; set; }
-        [IgnoreDataMember]
-        public string Category => null;
-
-        public ModelType ModelType => ModelType.SubmodelDescriptor;
+        public IReference SemanticId { get; set; }    
+        public override ModelType ModelType => ModelType.SubmodelDescriptor;
 
         [JsonConstructor]
-        public SubmodelDescriptor(string idShort, IEnumerable<IEndpoint> endpoints)
-        {
-            IdShort = idShort;
-            Endpoints = endpoints ?? new List<IEndpoint>();
-        }
+        public SubmodelDescriptor(IEnumerable<IEndpoint> endpoints) : base (endpoints)
+        { }
 
-        public SubmodelDescriptor(ISubmodel submodel, IEnumerable<IEndpoint> endpoints) : this(submodel.IdShort, endpoints)
+        public SubmodelDescriptor(ISubmodel submodel, IEnumerable<IEndpoint> endpoints) : this(endpoints)
         {
-            if (submodel == null)
-                return;
-
+            IdShort = submodel.IdShort;
             Identification = submodel.Identification;
             Administration = submodel.Administration;
-            IdShort = submodel.IdShort;
             Description = submodel.Description;
+            DisplayName = submodel.DisplayName;
             SemanticId = submodel.SemanticId;
-        }
-
-        public void AddEndpoints(IEnumerable<IEndpoint> endpoints)
-        {
-            foreach (var endpoint in endpoints)
-            {                
-                (Endpoints as IList).Add(endpoint);
-            }
-        }
-        public void SetEndpoints(IEnumerable<IEndpoint> endpoints)
-        {
-            Endpoints = endpoints;
         }
     }
 }

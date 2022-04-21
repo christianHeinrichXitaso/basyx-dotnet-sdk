@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace BaSyx.API.Clients
 {
-    public interface IAssetAdministrationShellClient : IAssetAdministrationShellInterface
+    public interface IAssetAdministrationShellClient : IAssetAdministrationShellInterface, IClient
     {
         Task<IResult<IAssetAdministrationShell>> RetrieveAssetAdministrationShellAsync(RequestContent content);
 

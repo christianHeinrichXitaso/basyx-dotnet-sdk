@@ -12,7 +12,7 @@ using BaSyx.API.Interfaces;
 
 namespace BaSyx.API.Clients
 {
-    public interface ISubmodelRegistryClient : ISubmodelRegistryInterface
+    public interface ISubmodelRegistryClient : ISubmodelRegistryInterface, IClient
     {
         
     }

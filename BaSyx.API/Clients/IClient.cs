@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
 * Copyright (c) 2022 Bosch Rexroth AG
 * Author: Constantin Ziesche (constantin.ziesche@bosch.com)
 *
@@ -8,10 +8,12 @@
 *
 * SPDX-License-Identifier: MIT
 *******************************************************************************/
-namespace BaSyx.Models.Connectivity
-{
-    public interface IEndpointSecurity
-    {
+using BaSyx.Models.Connectivity;
 
+namespace BaSyx.API.Clients
+{
+    public interface IClient
+    {
+        IEndpoint Endpoint { get; }
     }
 }

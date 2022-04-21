@@ -9,14 +9,26 @@
 * SPDX-License-Identifier: MIT
 *******************************************************************************/
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace BaSyx.Models.Connectivity
 {
-    public interface IAddressable
+    public class MqttProtocol : ProtocolInformation
     {
-        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "endpoints")]
-        IEnumerable<IEndpoint> Endpoints { get; }
+        [IgnoreDataMember]
+        public Uri BrokerUri { get; }
+
+        [IgnoreDataMember]
+        public string Topic { get; }
+
+        public MqttProtocol(string endpointAddress) : base (endpointAddress)
+        {
+            Uri uri = new Uri(endpointAddress);
+            BrokerUri = new Uri(uri.AbsoluteUri);
+            Topic = uri.AbsolutePath;
+        }
+
+        public MqttProtocol(Uri uri) : this(uri?.ToString())
+        { }
     }
 }

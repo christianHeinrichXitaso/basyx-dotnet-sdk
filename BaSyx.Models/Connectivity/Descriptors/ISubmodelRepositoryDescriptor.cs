@@ -9,6 +9,7 @@
 * SPDX-License-Identifier: MIT
 *******************************************************************************/
 using BaSyx.Models.AdminShell;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace BaSyx.Models.Connectivity
@@ -16,6 +17,8 @@ namespace BaSyx.Models.Connectivity
     public interface ISubmodelRepositoryDescriptor : IServiceDescriptor, IModelElement
     {
         [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "submodelDescriptors")]
-        IElementContainer<ISubmodelDescriptor> SubmodelDescriptors { get; set; }
+        IEnumerable<ISubmodelDescriptor> SubmodelDescriptors { get; }
+
+        void AddSubmodelDescriptor(ISubmodelDescriptor submodelDescriptor);
     }
 }

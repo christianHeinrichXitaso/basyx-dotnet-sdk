@@ -12,6 +12,7 @@ using BaSyx.Models.Connectivity;
 using BaSyx.Models.AdminShell;
 using BaSyx.Utils.ResultHandling;
 using System;
+using System.Collections.Generic;
 
 namespace BaSyx.API.Interfaces
 {
@@ -40,14 +41,14 @@ namespace BaSyx.API.Interfaces
         /// </summary>
         /// <param name="predicate">The predicate to explicitly look for specific Asset Administration Shell Descriptors</param>
         /// <returns>Result object with embedded list of Asset Administration Shell Descriptors</returns>
-        IResult<IQueryableElementContainer<ISubmodelDescriptor>> RetrieveAllSubmodelRegistrations();
+        IResult<IEnumerable<ISubmodelDescriptor>> RetrieveAllSubmodelRegistrations();
 
         /// <summary>
         /// Retrieves all Submodel registrations with a certain search predicate
         /// </summary>
         /// <param name="predicate">The predicate to explicitly look for specific Asset Administration Shell Descriptors</param>
         /// <returns>Result object with embedded list of Asset Administration Shell Descriptors</returns>
-        IResult<IQueryableElementContainer<ISubmodelDescriptor>> RetrieveAllSubmodelRegistrations(Predicate<ISubmodelDescriptor> predicate);
+        IResult<IEnumerable<ISubmodelDescriptor>> RetrieveAllSubmodelRegistrations(Predicate<ISubmodelDescriptor> predicate);
 
         /// <summary>
         /// Retrieves the Submodel registration

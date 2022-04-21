@@ -11,6 +11,7 @@
 using BaSyx.API.Interfaces;
 using BaSyx.Models.Connectivity;
 using BaSyx.Models.AdminShell;
+using BaSyx.API.Clients;
 
 namespace BaSyx.API.ServiceProvider
 {
@@ -32,6 +33,13 @@ namespace BaSyx.API.ServiceProvider
                     var submodelSp = submodel.CreateServiceProvider();
                     sp.RegisterSubmodelServiceProvider(submodel.Identification.Id, submodelSp);
                 }
+
+            return sp;
+        }
+
+        public static IAssetAdministrationShellServiceProvider CreateServiceProvider(this IAssetAdministrationShellClient client)
+        {
+            AssetAdministrationShellClientServiceProvider sp = new AssetAdministrationShellClientServiceProvider(client);
 
             return sp;
         }

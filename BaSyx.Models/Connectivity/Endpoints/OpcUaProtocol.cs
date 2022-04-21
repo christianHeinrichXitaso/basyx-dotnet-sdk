@@ -8,34 +8,27 @@
 *
 * SPDX-License-Identifier: MIT
 *******************************************************************************/
-using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
 
 namespace BaSyx.Models.Connectivity
 {
-    public class OpcUaEndpoint : IEndpoint
+    public class OpcUaProtocol : ProtocolInformation
     {
-        public string Address { get; }
-
         [IgnoreDataMember]
         public string BrowsePath { get; }
+
         [IgnoreDataMember]
         public string Authority { get; }
-        public string Type => EndpointType.OPC_UA;
 
-        public IEndpointSecurity Security { get; set; }
-
-        [JsonConstructor]
-        public OpcUaEndpoint(string address)
+        public OpcUaProtocol(string endpointAddress) : base(endpointAddress)
         {
-            Address = address ?? throw new ArgumentNullException(nameof(address));
-            Uri uri = new Uri(address);
+            Uri uri = new Uri(endpointAddress);
             BrowsePath = uri.AbsolutePath;
             Authority = uri.Authority;
         }
 
-        public OpcUaEndpoint(Uri uri) : this(uri?.ToString())
+        public OpcUaProtocol(Uri uri) : this(uri?.ToString())
         { }
 
     }

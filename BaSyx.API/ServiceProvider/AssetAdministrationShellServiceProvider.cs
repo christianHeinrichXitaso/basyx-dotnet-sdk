@@ -59,7 +59,7 @@ namespace BaSyx.API.ServiceProvider
                 foreach (var sp in SubmodelServiceProviders)
                 {
                     if (sp.Value?.ServiceDescriptor != null)
-                        _serviceDescriptor.SubmodelDescriptors.CreateOrUpdate(sp.Key, sp.Value.ServiceDescriptor);
+                        _serviceDescriptor.AddSubmodelDescriptor(sp.Value.ServiceDescriptor);
                 }
 
                 return _serviceDescriptor;

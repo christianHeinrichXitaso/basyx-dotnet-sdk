@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace BaSyx.API.Clients
 {
-    public interface IAssetAdministrationShellRepositoryClient : IAssetAdministrationShellRepositoryInterface
+    public interface IAssetAdministrationShellRepositoryClient : IAssetAdministrationShellRepositoryInterface, IClient
     {
         Task<IResult<IAssetAdministrationShell>> CreateAssetAdministrationShellAsync(IAssetAdministrationShell aas);
 

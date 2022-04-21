@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace BaSyx.API.Clients
 {
-    public interface ISubmodelRepositoryClient : ISubmodelRepositoryInterface
+    public interface ISubmodelRepositoryClient : ISubmodelRepositoryInterface, IClient
     {
         Task<IResult<ISubmodel>> CreateSubmodelAsync(ISubmodel submodel);
 

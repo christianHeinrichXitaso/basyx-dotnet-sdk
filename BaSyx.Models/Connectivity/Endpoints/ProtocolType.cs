@@ -8,16 +8,20 @@
 *
 * SPDX-License-Identifier: MIT
 *******************************************************************************/
-using System.Runtime.Serialization;
-
 namespace BaSyx.Models.Connectivity
 {
-    public interface IEndpoint
+    public static class ProtocolType
     {
-        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "protocolInformation")]
-        ProtocolInformation ProtocolInformation { get; }
-
-        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "interface")]
-        InterfaceName Interface { get; }
+        public const string HTTP = "http";
+        public const string HTTPS = "https";
+        public const string TCP = "tcp";
+        public const string MQTT = "mqtt";
+        public const string MQTTS = "mqtts";
+        public const string OPC_TCP = "opc.tcp";
+        public const string COAP = "coap";
+        public const string COAPS = "coaps";
+        public const string WEBSOCKET = "ws";
+        public const string WEBSOCKETS = "wss";
     }
 }
+

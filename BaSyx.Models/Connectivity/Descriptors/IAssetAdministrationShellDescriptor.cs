@@ -9,15 +9,22 @@
 * SPDX-License-Identifier: MIT
 *******************************************************************************/
 using BaSyx.Models.AdminShell;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace BaSyx.Models.Connectivity
 {
     public interface IAssetAdministrationShellDescriptor : IServiceDescriptor, IModelElement
     {
-        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "asset")]
-        IAsset Asset { get; set; }
-        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "submodels")]
-        IElementContainer<ISubmodelDescriptor> SubmodelDescriptors { get; set; }
+        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "globalAssetId")]
+        IReference GlobalAssetId { get; }
+
+        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "specificAssetIds")]
+        IEnumerable<IdentifierKeyValuePair> SpecificAssetIds { get; }
+
+        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "submodelDescriptors")]
+        IEnumerable<ISubmodelDescriptor> SubmodelDescriptors { get; set; }
+
+        void AddSubmodelDescriptor(ISubmodelDescriptor submodelDescriptor);
     }
 }

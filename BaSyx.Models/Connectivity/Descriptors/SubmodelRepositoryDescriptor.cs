@@ -13,38 +13,20 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Linq;
-using System.Collections;
 
 namespace BaSyx.Models.Connectivity
 {
     [DataContract]
-    public class SubmodelRepositoryDescriptor : ISubmodelRepositoryDescriptor
+    public class SubmodelRepositoryDescriptor : Descriptor, ISubmodelRepositoryDescriptor
     {
-        [IgnoreDataMember]
-        public Identifier Identification { get; set; }
-        [IgnoreDataMember]
-        public AdministrativeInformation Administration { get; set; }
-        [IgnoreDataMember]
-        public string IdShort { get; set; }
-        [IgnoreDataMember]
-        public LangStringSet Description { get; set; }
-        [IgnoreDataMember]
-        public LangStringSet DisplayName { get; set; }
-        public IEnumerable<IEndpoint> Endpoints { get; internal set; }
+        public IEnumerable<ISubmodelDescriptor> SubmodelDescriptors => _submodelDescriptors;
+        public override ModelType ModelType => ModelType.SubmodelRepositoryDescriptor;
 
-        [IgnoreDataMember]
-        public IReferable Parent { get; set; }
-        [IgnoreDataMember]
-        public string Category => null;
+        private List<ISubmodelDescriptor> _submodelDescriptors;
 
-        public ModelType ModelType => ModelType.AssetAdministrationShellRepositoryDescriptor;
-
-        public IElementContainer<ISubmodelDescriptor> SubmodelDescriptors { get; set; }
-
-        public SubmodelRepositoryDescriptor(IEnumerable<IEndpoint> endpoints) 
+        public SubmodelRepositoryDescriptor(IEnumerable<IEndpoint> endpoints) : base (endpoints)
         {
-            Endpoints = endpoints ?? new List<IEndpoint>();
-            SubmodelDescriptors = new ElementContainer<ISubmodelDescriptor>(this);
+            _submodelDescriptors = new List<ISubmodelDescriptor>();
         }
      
         [JsonConstructor]
@@ -59,21 +41,12 @@ namespace BaSyx.Models.Connectivity
 
         public void AddSubmodel(ISubmodel submodel)
         {
-            SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, Endpoints.ToList());
-            SubmodelDescriptors.Create(submodelDescriptor);
+            _submodelDescriptors.Add(new SubmodelDescriptor(submodel, Endpoints.ToList()));
         }
 
-        public void AddEndpoints(IEnumerable<IEndpoint> endpoints)
+        public void AddSubmodelDescriptor(ISubmodelDescriptor submodelDescriptor)
         {
-            foreach (var endpoint in endpoints)
-            {
-                (Endpoints as IList).Add(endpoint);
-            }
-        }
-
-        public void SetEndpoints(IEnumerable<IEndpoint> endpoints)
-        {
-            Endpoints = endpoints;
+            _submodelDescriptors.Add(submodelDescriptor);
         }
     }
 }

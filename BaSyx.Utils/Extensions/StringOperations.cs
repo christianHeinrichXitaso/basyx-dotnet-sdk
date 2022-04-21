@@ -16,6 +16,45 @@ namespace BaSyx.Utils.Extensions
 {
     public static class StringOperations
     {
+        public static Regex DEFAULT_PLACEHOLDER = new Regex("\\${(.*?)}");
+
+        /// <summary>
+        /// Replaces the default placeholder ${PLACEHOLDER_NAME} by a replacement function
+        /// </summary>
+        /// <param name="s">String to replace placeholders</param>
+        /// <param name="func">Replacement function</param>
+        /// <returns>Replaced string</returns>
+        public static string ReplacePlaceholder(this string s, Func<string, string> func)
+            => ReplacePlaceholder(s, DEFAULT_PLACEHOLDER, func);
+
+        /// <summary>
+        /// Replaces placeholders according to passed Regex by a replacement function
+        /// </summary>
+        /// <param name="s">String to replace placeholders</param>
+        /// <param name="regex">Regex for placeholders</param>
+        /// <param name="func">Replacement function</param>
+        /// <returns>Replaced string</returns>
+        public static string ReplacePlaceholder(this string s, Regex regex, Func<string, string> func)
+        {
+            MatchCollection matches = regex.Matches(s);
+            foreach (Match match in matches)
+            {
+                string withoutBrackets = match.Groups[1].Value;
+                string withBrackets = match.Value;
+                string replacement = func.Invoke(withoutBrackets);
+                s = s.Replace(withBrackets, replacement);
+            }
+            return s;
+        }
+
+        /// <summary>
+        /// Replaces a string that contains placeholder of format ${ENVIRONMENT_VARIABLE} with the respective environment variable value
+        /// </summary>
+        /// <param name="s">String to replace placeholders</param>
+        /// <returns>Replaced string</returns>
+        public static string ReplaceWithEnvironmentVariable(this string s) => 
+            ReplacePlaceholder(s, DEFAULT_PLACEHOLDER, variable => Environment.GetEnvironmentVariable(variable));
+       
         public static string GetValueOrStringEmpty<T>(this T? nullable) where T : struct
         {
             if (nullable != null)
@@ -45,6 +84,18 @@ namespace BaSyx.Utils.Extensions
                 return string.Empty;
             }
             return char.ToLower(s[0]) + s.Substring(1);
+        }
+
+        public static string RemoveFromEnd(this string s, string suffix)
+        {
+            if (s.EndsWith(suffix))
+            {
+                return s.Substring(0, s.Length - suffix.Length);
+            }
+            else
+            {
+                return s;
+            }
         }
 
         public static string Base64Encode(this byte[] bytesToEncode)

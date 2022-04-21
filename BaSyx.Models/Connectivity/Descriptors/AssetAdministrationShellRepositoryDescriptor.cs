@@ -13,38 +13,20 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Linq;
-using System.Collections;
 
 namespace BaSyx.Models.Connectivity
 {
     [DataContract]
-    public class AssetAdministrationShellRepositoryDescriptor : IAssetAdministrationShellRepositoryDescriptor
+    public class AssetAdministrationShellRepositoryDescriptor : Descriptor, IAssetAdministrationShellRepositoryDescriptor
     {
-        [IgnoreDataMember]
-        public Identifier Identification { get; set; }
-        [IgnoreDataMember]
-        public AdministrativeInformation Administration { get; set; }
-        [IgnoreDataMember]
-        public string IdShort { get; set; }
-        [IgnoreDataMember]
-        public LangStringSet Description { get; set; }
-        [IgnoreDataMember]
-        public LangStringSet DisplayName { get; set; }
-        public IEnumerable<IEndpoint> Endpoints { get; internal set; }
+        public IEnumerable<IAssetAdministrationShellDescriptor> AssetAdministrationShellDescriptors => _assetAdministrationShellDescriptors;
+        public override ModelType ModelType => ModelType.AssetAdministrationShellRepositoryDescriptor;
 
-        [IgnoreDataMember]
-        public IReferable Parent { get; set; }
-        [IgnoreDataMember]
-        public string Category => null;
+        private List<IAssetAdministrationShellDescriptor> _assetAdministrationShellDescriptors;
 
-        public ModelType ModelType => ModelType.AssetAdministrationShellRepositoryDescriptor;
-
-        public IElementContainer<IAssetAdministrationShellDescriptor> AssetAdministrationShellDescriptors { get; set; }
-
-        public AssetAdministrationShellRepositoryDescriptor(IEnumerable<IEndpoint> endpoints) 
+        public AssetAdministrationShellRepositoryDescriptor(IEnumerable<IEndpoint> endpoints) : base (endpoints)
         {
-            Endpoints = endpoints ?? new List<IEndpoint>();
-            AssetAdministrationShellDescriptors = new ElementContainer<IAssetAdministrationShellDescriptor>(this);
+            _assetAdministrationShellDescriptors = new List<IAssetAdministrationShellDescriptor>();
         }
      
         [JsonConstructor]
@@ -63,23 +45,15 @@ namespace BaSyx.Models.Connectivity
             if (aas.Submodels?.Count() > 0)
                 foreach (var submodel in aas.Submodels.Values)
                 {
-                    assetAdministrationShellDescriptor.SubmodelDescriptors.Create(new SubmodelDescriptor(submodel, Endpoints.ToList()));
+                    assetAdministrationShellDescriptor.AddSubmodel(submodel, Endpoints.ToList());
                 }
-               
-            AssetAdministrationShellDescriptors.Create(assetAdministrationShellDescriptor);
+
+            _assetAdministrationShellDescriptors.Add(assetAdministrationShellDescriptor);
         }
 
-        public void AddEndpoints(IEnumerable<IEndpoint> endpoints)
+        public void AddAssetAdministrationShellDescriptor(IAssetAdministrationShellDescriptor aasDescriptor)
         {
-            foreach (var endpoint in endpoints)
-            {
-                (Endpoints as IList).Add(endpoint);
-            }
-        }
-
-        public void SetEndpoints(IEnumerable<IEndpoint> endpoints)
-        {
-            Endpoints = endpoints;
+            _assetAdministrationShellDescriptors.Add(aasDescriptor);
         }
     }
 }

@@ -28,17 +28,17 @@ namespace BaSyx.API.ServiceProvider
             string multiUrl = serverConfiguration.Hosting.Urls.Find(u => u.Contains("+"));
             if (!string.IsNullOrEmpty(multiUrl))
             {
-                Uri uri = new Uri(multiUrl.Replace("+", "localhost"));
+                Uri uri = new Uri(multiUrl.Replace("+", "0.0.0.0"));
                 bool includeIPv6 = false;
                 if (serverConfiguration.Hosting.EnableIPv6.HasValue && serverConfiguration.Hosting.EnableIPv6.Value)
                     includeIPv6 = true;
 
-                List<IEndpoint> endpoints = GetNetworkInterfaceBasedEndpoints(uri.Scheme, uri.Port, includeIPv6);
+                List<IEndpoint> endpoints = GetNetworkInterfaceBasedEndpoints(uri.Scheme, uri.Port, includeIPv6, InterfaceName.AssetAdministrationShellRepositoryInterface);
                 serviceProvider.UseDefaultEndpointRegistration(endpoints);
             }
             else
             {
-                List<IEndpoint> endpoints = serverConfiguration.Hosting.Urls.ConvertAll(EndpointConverter);
+                List<IEndpoint> endpoints = ConvertEndpoints(serverConfiguration.Hosting.Urls, InterfaceName.AssetAdministrationShellRepositoryInterface);
                 serviceProvider.UseDefaultEndpointRegistration(endpoints);
             }
         }
@@ -48,34 +48,37 @@ namespace BaSyx.API.ServiceProvider
             string multiUrl = serverConfiguration.Hosting.Urls.Find(u => u.Contains("+"));
             if (!string.IsNullOrEmpty(multiUrl))
             {
-                Uri uri = new Uri(multiUrl.Replace("+", "localhost"));
+                Uri uri = new Uri(multiUrl.Replace("+", "0.0.0.0"));
                 bool includeIPv6 = false;
                 if (serverConfiguration.Hosting.EnableIPv6.HasValue && serverConfiguration.Hosting.EnableIPv6.Value)
                     includeIPv6 = true;
 
-                List<IEndpoint> endpoints = GetNetworkInterfaceBasedEndpoints(uri.Scheme, uri.Port, includeIPv6);
+                List<IEndpoint> endpoints = GetNetworkInterfaceBasedEndpoints(uri.Scheme, uri.Port, includeIPv6, InterfaceName.SubmodelRepositoryInterface);
                 serviceProvider.UseDefaultEndpointRegistration(endpoints);
             }
             else
             {
-                List<IEndpoint> endpoints = serverConfiguration.Hosting.Urls.ConvertAll(EndpointConverter);
+                List<IEndpoint> endpoints = ConvertEndpoints(serverConfiguration.Hosting.Urls, InterfaceName.SubmodelRepositoryInterface);
                 serviceProvider.UseDefaultEndpointRegistration(endpoints);
             }
         }
 
-        private static IEndpoint EndpointConverter(string input)
+        private static List<IEndpoint> ConvertEndpoints(List<string> urls, InterfaceName interfaceName)
         {
             try
             {
-                Uri uri = new Uri(input);
-                return EndpointFactory.CreateEndpoint(uri, null);
+                List<IEndpoint> endpoints = new List<IEndpoint>();
+                foreach (var url in urls)
+                {
+                    endpoints.Add(new Endpoint(url, interfaceName));
+                }
+                return endpoints;
             }
             catch (Exception e)
             {
-                logger.LogWarning(e, "Error converting input string: " + input + " - Message: " + e.Message);
+                logger.LogWarning(e, "Error converting urls");
                 return null;
             }
-            
         }
 
         public static void UseAutoEndpointRegistration(this IAssetAdministrationShellServiceProvider serviceProvider, ServerConfiguration serverConfiguration)
@@ -88,12 +91,12 @@ namespace BaSyx.API.ServiceProvider
                 if (serverConfiguration.Hosting.EnableIPv6.HasValue && serverConfiguration.Hosting.EnableIPv6.Value)
                     includeIPv6 = true;
 
-                List<IEndpoint> endpoints = GetNetworkInterfaceBasedEndpoints(uri.Scheme, uri.Port, includeIPv6);
+                List<IEndpoint> endpoints = GetNetworkInterfaceBasedEndpoints(uri.Scheme, uri.Port, includeIPv6, InterfaceName.AssetAdministrationShellInterface);
                 serviceProvider.UseDefaultEndpointRegistration(endpoints);
             }
             else
             {
-                List<IEndpoint> endpoints = serverConfiguration.Hosting.Urls.ConvertAll(EndpointConverter);
+                List<IEndpoint> endpoints = ConvertEndpoints(serverConfiguration.Hosting.Urls, InterfaceName.AssetAdministrationShellInterface);
                 serviceProvider.UseDefaultEndpointRegistration(endpoints);
             }
         }
@@ -108,17 +111,17 @@ namespace BaSyx.API.ServiceProvider
                 if (serverConfiguration.Hosting.EnableIPv6.HasValue && serverConfiguration.Hosting.EnableIPv6.Value)
                     includeIPv6 = true;
 
-                List<IEndpoint> endpoints = GetNetworkInterfaceBasedEndpoints(uri.Scheme, uri.Port, includeIPv6);
+                List<IEndpoint> endpoints = GetNetworkInterfaceBasedEndpoints(uri.Scheme, uri.Port, includeIPv6, InterfaceName.SubmodelInterface);
                 serviceProvider.UseDefaultEndpointRegistration(endpoints);
             }
             else
             {
-                List<IEndpoint> endpoints = serverConfiguration.Hosting.Urls.ConvertAll(EndpointConverter);
+                List<IEndpoint> endpoints = ConvertEndpoints(serverConfiguration.Hosting.Urls, InterfaceName.SubmodelInterface);
                 serviceProvider.UseDefaultEndpointRegistration(endpoints);
             }
         }
 
-        private static List<IEndpoint> GetNetworkInterfaceBasedEndpoints(string endpointType, int port, bool includeIPv6)
+        private static List<IEndpoint> GetNetworkInterfaceBasedEndpoints(string endpointType, int port, bool includeIPv6, InterfaceName interfaceName)
         {
             IEnumerable<IPAddress> ipAddresses = NetworkUtils.GetIPAddresses(includeIPv6);
             List<IEndpoint> aasEndpoints = new List<IEndpoint>();
@@ -127,13 +130,13 @@ namespace BaSyx.API.ServiceProvider
                 if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                 {
                     string address = endpointType + "://" + ipAddress.ToString() + ":" + port;
-                    aasEndpoints.Add(EndpointFactory.CreateEndpoint(endpointType, address, null));
+                    aasEndpoints.Add(new Endpoint(address, interfaceName));
                     logger.LogInformation($"Using {address} as endpoint");
                 }
                 else if (includeIPv6 && ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                 {
                     string address = endpointType + "://[" + ipAddress.ToString() + "]:" + port;
-                    aasEndpoints.Add(EndpointFactory.CreateEndpoint(endpointType, address, null));
+                    aasEndpoints.Add(new Endpoint(address, interfaceName));
                     logger.LogInformation($"Using {address} as endpoint");
                 }
                 else
@@ -147,31 +150,31 @@ namespace BaSyx.API.ServiceProvider
             List<IEndpoint> repositoryEndpoints = new List<IEndpoint>();
             foreach (var endpoint in endpoints)
             {
-                string epAddress = endpoint.Address;
+                string epAddress = endpoint.ProtocolInformation.EndpointAddress;
                 if (!epAddress.EndsWith(AssetAdministrationShellRepositoryRoutes.SHELLS))
                     epAddress = epAddress.TrimEnd('/') + AssetAdministrationShellRepositoryRoutes.SHELLS;
 
-                repositoryEndpoints.Add(EndpointFactory.CreateEndpoint(endpoint.Type, epAddress, endpoint.Security));
+                repositoryEndpoints.Add(new Endpoint(epAddress, InterfaceName.AssetAdministrationShellRepositoryInterface));
             }
 
             serviceProvider.ServiceDescriptor.AddEndpoints(repositoryEndpoints);
             var aasRepositoryDescriptor = serviceProvider.ServiceDescriptor;
-            foreach (var aasDescriptor in aasRepositoryDescriptor.AssetAdministrationShellDescriptors.Values)
+            foreach (var aasDescriptor in aasRepositoryDescriptor.AssetAdministrationShellDescriptors)
             {
                 List<IEndpoint> aasEndpoints = new List<IEndpoint>();
                 foreach (var endpoint in repositoryEndpoints)
                 {
-                    var ep = EndpointFactory.CreateEndpoint(endpoint.Type, GetAssetAdministrationShellEndpoint(endpoint, aasDescriptor.Identification.Id), endpoint.Security);
+                    var ep = new Endpoint(GetAssetAdministrationShellEndpoint(endpoint, aasDescriptor.Identification.Id), InterfaceName.AssetAdministrationShellRepositoryInterface);
                     aasEndpoints.Add(ep);
                 }
                 aasDescriptor.AddEndpoints(aasEndpoints);
 
-                foreach (var submodelDescriptor in aasDescriptor.SubmodelDescriptors.Values)
+                foreach (var submodelDescriptor in aasDescriptor.SubmodelDescriptors)
                 {
                     List<IEndpoint> submodelEndpoints = new List<IEndpoint>();
                     foreach (var endpoint in aasEndpoints)
                     {
-                        var ep = EndpointFactory.CreateEndpoint(endpoint.Type, GetSubmodelEndpoint(endpoint, submodelDescriptor.Identification.Id), endpoint.Security);
+                        var ep = new Endpoint(GetSubmodelEndpoint(endpoint, submodelDescriptor.Identification.Id), InterfaceName.AssetAdministrationShellRepositoryInterface);
                         submodelEndpoints.Add(ep);
                     }
                     submodelDescriptor.AddEndpoints(submodelEndpoints);
@@ -184,21 +187,21 @@ namespace BaSyx.API.ServiceProvider
             List<IEndpoint> repositoryEndpoints = new List<IEndpoint>();
             foreach (var endpoint in endpoints)
             {
-                string epAddress = endpoint.Address;
+                string epAddress = endpoint.ProtocolInformation.EndpointAddress;
                 if (!epAddress.EndsWith(SubmodelRepositoryRoutes.SUBMODELS))
                     epAddress = epAddress.TrimEnd('/') + SubmodelRepositoryRoutes.SUBMODELS;
 
-                repositoryEndpoints.Add(EndpointFactory.CreateEndpoint(endpoint.Type, epAddress, endpoint.Security));
+                repositoryEndpoints.Add(new Endpoint(epAddress, InterfaceName.SubmodelRepositoryInterface));
             }
 
             serviceProvider.ServiceDescriptor.AddEndpoints(repositoryEndpoints);
             var submodelRepositoryDescriptor = serviceProvider.ServiceDescriptor;
-            foreach (var submodelDescriptor in submodelRepositoryDescriptor.SubmodelDescriptors.Values)
+            foreach (var submodelDescriptor in submodelRepositoryDescriptor.SubmodelDescriptors)
             {
                 List<IEndpoint> submodelEndpoints = new List<IEndpoint>();
                 foreach (var endpoint in repositoryEndpoints)
                 {
-                    var ep = EndpointFactory.CreateEndpoint(endpoint.Type, GetSubmodelInRepositoryEndpoint(endpoint, submodelDescriptor.Identification.Id), endpoint.Security);
+                    var ep = new Endpoint(GetSubmodelInRepositoryEndpoint(endpoint, submodelDescriptor.Identification.Id), InterfaceName.SubmodelRepositoryInterface);
                     submodelEndpoints.Add(ep);
                 }
                 submodelDescriptor.AddEndpoints(submodelEndpoints);                
@@ -210,21 +213,21 @@ namespace BaSyx.API.ServiceProvider
             List<IEndpoint> aasEndpoints = new List<IEndpoint>();
             foreach (var endpoint in endpoints)
             {
-                string epAddress = endpoint.Address;
+                string epAddress = endpoint.ProtocolInformation.EndpointAddress;
                 if (!epAddress.EndsWith(AssetAdministrationShellRoutes.AAS))
                     epAddress = epAddress.TrimEnd('/') + AssetAdministrationShellRoutes.AAS;
 
-                aasEndpoints.Add(EndpointFactory.CreateEndpoint(endpoint.Type, epAddress, endpoint.Security));
+                aasEndpoints.Add(new Endpoint(epAddress, InterfaceName.AssetAdministrationShellInterface));
             }
 
             serviceProvider.ServiceDescriptor.AddEndpoints(aasEndpoints);
             var aasDescriptor = serviceProvider.ServiceDescriptor;
-            foreach (var submodel in aasDescriptor.SubmodelDescriptors.Values)
+            foreach (var submodel in aasDescriptor.SubmodelDescriptors)
             {
                 List<IEndpoint> spEndpoints = new List<IEndpoint>();
                 foreach (var endpoint in aasEndpoints)
                 {
-                    var ep = EndpointFactory.CreateEndpoint(endpoint.Type, GetSubmodelEndpoint(endpoint, submodel.Identification.Id), endpoint.Security);
+                    var ep = new Endpoint(GetSubmodelEndpoint(endpoint, submodel.Identification.Id), InterfaceName.AssetAdministrationShellInterface);
                     spEndpoints.Add(ep);
                 }
                 submodel.AddEndpoints(spEndpoints);
@@ -236,11 +239,11 @@ namespace BaSyx.API.ServiceProvider
             List<IEndpoint> submodelEndpoints = new List<IEndpoint>();
             foreach (var endpoint in endpoints)
             {
-                string epAddress = endpoint.Address;
+                string epAddress = endpoint.ProtocolInformation.EndpointAddress;
                 if (!epAddress.EndsWith(SubmodelRoutes.SUBMODEL))
                     epAddress = epAddress.TrimEnd('/') + SubmodelRoutes.SUBMODEL;
 
-                submodelEndpoints.Add(EndpointFactory.CreateEndpoint(endpoint.Type, epAddress, endpoint.Security));
+                submodelEndpoints.Add(new Endpoint(epAddress, InterfaceName.SubmodelInterface));
             }
 
             serviceProvider.ServiceDescriptor.AddEndpoints(submodelEndpoints);         
@@ -248,7 +251,7 @@ namespace BaSyx.API.ServiceProvider
 
         public static string GetSubmodelInRepositoryEndpoint(IEndpoint endpoint, string submodelId)
         {
-            string epAddress = endpoint.Address;
+            string epAddress = endpoint.ProtocolInformation.EndpointAddress;
             if (!epAddress.EndsWith(SubmodelRepositoryRoutes.SUBMODELS))
                 epAddress = epAddress.TrimEnd('/') + SubmodelRepositoryRoutes.SUBMODELS;
 
@@ -259,7 +262,7 @@ namespace BaSyx.API.ServiceProvider
 
         public static string GetSubmodelEndpoint(IEndpoint endpoint, string submodelId)
         {
-            string epAddress = endpoint.Address;
+            string epAddress = endpoint.ProtocolInformation.EndpointAddress;
             if (!epAddress.EndsWith(AssetAdministrationShellRoutes.AAS))
                 epAddress = epAddress.TrimEnd('/') + AssetAdministrationShellRoutes.AAS;
 
@@ -270,7 +273,7 @@ namespace BaSyx.API.ServiceProvider
 
         public static string GetAssetAdministrationShellEndpoint(IEndpoint endpoint, string aasId)
         {
-            string epAddress = endpoint.Address;
+            string epAddress = endpoint.ProtocolInformation.EndpointAddress;
             if (!epAddress.EndsWith(AssetAdministrationShellRepositoryRoutes.SHELLS))
                 epAddress = epAddress.TrimEnd('/') + AssetAdministrationShellRepositoryRoutes.SHELLS;
 

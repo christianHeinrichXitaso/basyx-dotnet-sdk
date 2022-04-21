@@ -18,59 +18,42 @@ using System.Linq;
 namespace BaSyx.Models.Connectivity
 {
     [DataContract]
-    public class AssetAdministrationShellDescriptor : IAssetAdministrationShellDescriptor
-    {
-        public Identifier Identification { get; set; }       
-        public AdministrativeInformation Administration { get; set; }
-        public string IdShort { get; set; }
-        public LangStringSet Description { get; set; }
-        public LangStringSet DisplayName { get; set; }
-        public IEnumerable<IEndpoint> Endpoints { get; internal set; }
+    public class AssetAdministrationShellDescriptor : Descriptor, IAssetAdministrationShellDescriptor
+    {   
+        public IReference GlobalAssetId { get; set; }
+        public IEnumerable<IdentifierKeyValuePair> SpecificAssetIds { get; set; }
+        public IEnumerable<ISubmodelDescriptor> SubmodelDescriptors { get => _submodelDescriptors; set { _submodelDescriptors = value.ToList(); } }
+        public override ModelType ModelType => ModelType.AssetAdministrationShellDescriptor;
 
-        [IgnoreDataMember]
-        public IReferable Parent { get; set; }
-        [IgnoreDataMember]
-        public string Category => null;
-
-        public ModelType ModelType => ModelType.AssetAdministrationShellDescriptor;
-
-        public IAsset Asset { get; set; }
-
-        public IElementContainer<ISubmodelDescriptor> SubmodelDescriptors { get; set; }
+        private List<ISubmodelDescriptor> _submodelDescriptors;
 
         [JsonConstructor]
-        public AssetAdministrationShellDescriptor(IEnumerable<IEndpoint> endpoints) 
+        public AssetAdministrationShellDescriptor(IEnumerable<IEndpoint> endpoints) : base (endpoints)
         {
-            Endpoints = endpoints ?? new List<IEndpoint>();
-            SubmodelDescriptors = new ElementContainer<ISubmodelDescriptor>(this);
+            _submodelDescriptors = new List<ISubmodelDescriptor>();
+            SpecificAssetIds = SpecificAssetIds?.Count() > 0 ? SpecificAssetIds : new List<IdentifierKeyValuePair>();
         }
 
         public AssetAdministrationShellDescriptor(IAssetAdministrationShell aas, IEnumerable<IEndpoint> endpoints) : this(endpoints)
         {
-            this.Identification = aas.Identification;
-            this.Administration = aas.Administration;
-            this.IdShort = aas.IdShort;
-            this.Description = aas.Description;
-            this.Asset = aas.Asset;            
+            IdShort = aas.IdShort;
+            Identification = aas.Identification;
+            Administration = aas.Administration;
+            Description = aas.Description;       
+            DisplayName = aas.DisplayName;
+            GlobalAssetId = aas.AssetInformation?.GlobalAssetId;
+            SpecificAssetIds = aas.AssetInformation?.SpecificAssetIds?.Count() > 0 ? aas.AssetInformation.SpecificAssetIds : SpecificAssetIds;
         }
 
-        public void AddSubmodel(ISubmodel submodel)
+        public void AddSubmodel(ISubmodel submodel, IEnumerable<IEndpoint> submodelEndpoints = null)
         {
-            SubmodelDescriptors.Create(
-                new SubmodelDescriptor(submodel, Endpoints.ToList()));
+            var smEndpoints = submodelEndpoints ?? Endpoints.ToList();
+            _submodelDescriptors.Add(new SubmodelDescriptor(submodel, smEndpoints));
         }
 
-        public void AddEndpoints(IEnumerable<IEndpoint> endpoints)
+        public void AddSubmodelDescriptor(ISubmodelDescriptor submodelDescriptor)
         {
-            foreach (var endpoint in endpoints)
-            {
-                (Endpoints as IList).Add(endpoint);
-            }
-        }
-
-        public void SetEndpoints(IEnumerable<IEndpoint> endpoints)
-        {
-            Endpoints = endpoints;
+            _submodelDescriptors.Add(submodelDescriptor);
         }
     }
 }

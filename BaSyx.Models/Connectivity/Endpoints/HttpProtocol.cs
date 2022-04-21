@@ -8,18 +8,16 @@
 *
 * SPDX-License-Identifier: MIT
 *******************************************************************************/
+using System;
+
 namespace BaSyx.Models.Connectivity
 {
-    public static class EndpointType
+    public class HttpProtocol : ProtocolInformation
     {
-        public const string HTTP = "http";
-        public const string HTTPS = "https";
-        public const string TCP = "tcp";
-        public const string MQTT = "mqtt";
-        public const string MQTTS = "mqtts";
-        public const string OPC_UA = "opc-ua";
-        public const string COAP = "coap";
-        public const string WEBSOCKET = "websocket";
+        public HttpProtocol(string endpointAddress) : base(endpointAddress)
+        { }
+
+        public HttpProtocol(Uri uri) : this(uri?.ToString())
+        { }
     }
 }
-

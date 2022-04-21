@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace BaSyx.API.Clients
 {
-    public interface ISubmodelClient : ISubmodelInterface
+    public interface ISubmodelClient : ISubmodelInterface, IClient
     {
         Task<IResult<ISubmodel>> RetrieveSubmodelAsync(RequestLevel level = default, RequestContent content = default, RequestExtent extent = default);
         Task<IResult> UpdateSubmodelAsync(ISubmodel submodel);

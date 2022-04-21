@@ -12,6 +12,7 @@ using BaSyx.Models.Connectivity;
 using BaSyx.Models.AdminShell;
 using BaSyx.Utils.ResultHandling;
 using System;
+using System.Collections.Generic;
 
 namespace BaSyx.API.Interfaces
 {
@@ -47,13 +48,13 @@ namespace BaSyx.API.Interfaces
         /// </summary>
         /// <param name="predicate">The predicate to explicitly look for specific Asset Administration Shell Descriptors</param>
         /// <returns>Result object with embedded list of Asset Administration Shell Descriptors</returns>
-        IResult<IQueryableElementContainer<IAssetAdministrationShellDescriptor>> RetrieveAllAssetAdministrationShellRegistrations();
+        IResult<IEnumerable<IAssetAdministrationShellDescriptor>> RetrieveAllAssetAdministrationShellRegistrations();
         /// <summary>
         /// Retrieves all Asset Administration Shell registrations from the Registry with a certain search predicate
         /// </summary>
         /// <param name="predicate">The predicate to explicitly look for specific Asset Administration Shell Descriptors</param>
         /// <returns>Result object with embedded list of Asset Administration Shell Descriptors</returns>
-        IResult<IQueryableElementContainer<IAssetAdministrationShellDescriptor>> RetrieveAllAssetAdministrationShellRegistrations(Predicate<IAssetAdministrationShellDescriptor> predicate);
+        IResult<IEnumerable<IAssetAdministrationShellDescriptor>> RetrieveAllAssetAdministrationShellRegistrations(Predicate<IAssetAdministrationShellDescriptor> predicate);
 
         /// <summary>
         /// Deletes the Asset Administration Shell registration from the Registry
@@ -85,7 +86,7 @@ namespace BaSyx.API.Interfaces
         /// <param name="aasIdentifier">The Asset Administration Shell’s unique id</param>
         /// <param name="predicate">The predicate to explicitly look for specific Asset Administration Shell Descriptors</param>
         /// <returns>Result object with embedded list of Asset Administration Shell Descriptors</returns>
-        IResult<IQueryableElementContainer<ISubmodelDescriptor>> RetrieveAllSubmodelRegistrations(string aasIdentifier);
+        IResult<IEnumerable<ISubmodelDescriptor>> RetrieveAllSubmodelRegistrations(string aasIdentifier);
 
         /// <summary>
         /// Retrieves all Submodel registrations with a certain search predicate
@@ -93,7 +94,7 @@ namespace BaSyx.API.Interfaces
         /// <param name="aasIdentifier">The Asset Administration Shell’s unique id</param>
         /// <param name="predicate">The predicate to explicitly look for specific Asset Administration Shell Descriptors</param>
         /// <returns>Result object with embedded list of Asset Administration Shell Descriptors</returns>
-        IResult<IQueryableElementContainer<ISubmodelDescriptor>> RetrieveAllSubmodelRegistrations(string aasIdentifier, Predicate<ISubmodelDescriptor> predicate);
+        IResult<IEnumerable<ISubmodelDescriptor>> RetrieveAllSubmodelRegistrations(string aasIdentifier, Predicate<ISubmodelDescriptor> predicate);
 
         /// <summary>
         /// Retrieves the Submodel registration

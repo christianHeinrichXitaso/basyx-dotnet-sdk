@@ -9,6 +9,7 @@
 * SPDX-License-Identifier: MIT
 *******************************************************************************/
 using BaSyx.Utils.Assembly;
+using BaSyx.Utils.Extensions;
 using BaSyx.Utils.FileSystem;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -16,13 +17,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace BaSyx.Utils.Settings
 {
-
     public static class SettingsExtensions
     {
         public static T As<T>(this Settings settings) where T : Settings
@@ -50,7 +51,22 @@ namespace BaSyx.Utils.Settings
         [XmlElement(IsNullable = true)]
         public ProxyConfiguration ProxyConfig { get; set; } = new ProxyConfiguration();
 
-        public static string ExecutingDirectory => AppDomain.CurrentDomain.BaseDirectory;//=> Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        [XmlElement]
+        public string ExecutionPath
+        {
+            get
+            {
+                if (_executionPath == null)
+                    _executionPath = Environment.CurrentDirectory;
+                return _executionPath;
+            }
+            set 
+            {
+                _executionPath = value.ReplaceWithEnvironmentVariable();
+            }
+        }
+
+        public static string WorkingDirectory => Environment.CurrentDirectory;
 
         public const string FileExtension = ".xml";
         public const string MiscellaneousConfig = "Miscellaneous";
@@ -59,14 +75,15 @@ namespace BaSyx.Utils.Settings
 
         private static readonly ILogger logger = LoggingExtentions.CreateLogger<Settings>();
        
-        private FileWatcher fileWatcher;
+        private FileWatcher _fileWatcher;
+        private string _executionPath;
 
         protected Settings()
         { }
 
-        public static void AutoLoadSettings()
+        public static void AutoLoadSettings(string settingsSuffix = "*Settings.xml")
         {
-            string[] files = Directory.GetFiles(ExecutingDirectory, "*Settings.xml", SearchOption.TopDirectoryOnly);
+            string[] files = Directory.GetFiles(WorkingDirectory, settingsSuffix, SearchOption.TopDirectoryOnly);
             if (files?.Length > 0)
             {
                 List<System.Reflection.Assembly> assemblies = AssemblyUtils.GetLoadedAssemblies();
@@ -109,7 +126,7 @@ namespace BaSyx.Utils.Settings
 
         public virtual void ConfigureSettingsWatcher(FileSystemChanged settingsFileChangedHandler)
         {
-            fileWatcher = new FileWatcher(FilePath, settingsFileChangedHandler);
+            _fileWatcher = new FileWatcher(FilePath, settingsFileChangedHandler);
         }       
 
         public static Settings LoadSettingsFromFile(string filePath, Type settingsType)
@@ -124,8 +141,7 @@ namespace BaSyx.Utils.Settings
             {
                 Settings settings = null;
 
-                System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(settingsType);
-                string settingsXml = File.ReadAllText(filePath);
+                XmlSerializer serializer = new XmlSerializer(settingsType);
                 using(FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     settings = (Settings)serializer.Deserialize(stream);
 
@@ -174,6 +190,8 @@ namespace BaSyx.Utils.Settings
                 using(FileStream stream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     serializer.Serialize(stream, this);
 
+                FilePath = filePath;
+
                 logger.LogInformation("Settings saved: " + filePath);
             }
             catch (Exception e)
@@ -201,7 +219,7 @@ namespace BaSyx.Utils.Settings
             Settings settings = LoadSettingsByName(typeof(T).Name);
             if (settings == null)
             {
-                string settingsFilePath = Path.Combine(ExecutingDirectory, FileName);
+                string settingsFilePath = Path.Combine(WorkingDirectory, FileName);
                 settings = LoadSettingsFromFile(settingsFilePath);
             }
             if(settings != null)

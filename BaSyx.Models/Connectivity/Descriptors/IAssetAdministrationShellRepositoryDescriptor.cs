@@ -9,6 +9,7 @@
 * SPDX-License-Identifier: MIT
 *******************************************************************************/
 using BaSyx.Models.AdminShell;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace BaSyx.Models.Connectivity
@@ -16,6 +17,8 @@ namespace BaSyx.Models.Connectivity
     public interface IAssetAdministrationShellRepositoryDescriptor : IServiceDescriptor, IModelElement
     {
         [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "assetAdministrationShellDescriptors")]
-        IElementContainer<IAssetAdministrationShellDescriptor> AssetAdministrationShellDescriptors { get; set; }
+        IEnumerable<IAssetAdministrationShellDescriptor> AssetAdministrationShellDescriptors { get; }
+
+        void AddAssetAdministrationShellDescriptor(IAssetAdministrationShellDescriptor aasDescriptor);
     }
 }

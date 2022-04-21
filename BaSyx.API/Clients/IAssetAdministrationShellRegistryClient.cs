@@ -9,15 +9,15 @@
 * SPDX-License-Identifier: MIT
 *******************************************************************************/
 using BaSyx.API.Interfaces;
-using BaSyx.Models.AdminShell;
 using BaSyx.Models.Connectivity;
 using BaSyx.Utils.ResultHandling;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BaSyx.API.Clients
 {
-    public interface IAssetAdministrationShellRegistryClient : IAssetAdministrationShellRegistryInterface
+    public interface IAssetAdministrationShellRegistryClient : IAssetAdministrationShellRegistryInterface, IClient
     {
         ///<inheritdoc cref="IAssetAdministrationShellRegistryInterface.CreateAssetAdministrationShellRegistration(IAssetAdministrationShellDescriptor)"/>
         Task<IResult<IAssetAdministrationShellDescriptor>> CreateAssetAdministrationShellRegistrationAsync(IAssetAdministrationShellDescriptor aasDescriptor);
@@ -29,10 +29,10 @@ namespace BaSyx.API.Clients
         Task<IResult<IAssetAdministrationShellDescriptor>> RetrieveAssetAdministrationShellRegistrationAsync(string aasIdentifier);
 
         ///<inheritdoc cref="IAssetAdministrationShellRegistryInterface.RetrieveAllAssetAdministrationShellRegistrations"/>
-        Task<IResult<IQueryableElementContainer<IAssetAdministrationShellDescriptor>>> RetrieveAllAssetAdministrationShellRegistrationsAsync();
+        Task<IResult<IEnumerable<IAssetAdministrationShellDescriptor>>> RetrieveAllAssetAdministrationShellRegistrationsAsync();
 
         ///<inheritdoc cref="IAssetAdministrationShellRegistryInterface.RetrieveAllAssetAdministrationShellRegistrations(Predicate{IAssetAdministrationShellDescriptor})"/>
-        Task<IResult<IQueryableElementContainer<IAssetAdministrationShellDescriptor>>> RetrieveAllAssetAdministrationShellRegistrationsAsync(Predicate<IAssetAdministrationShellDescriptor> predicate);
+        Task<IResult<IEnumerable<IAssetAdministrationShellDescriptor>>> RetrieveAllAssetAdministrationShellRegistrationsAsync(Predicate<IAssetAdministrationShellDescriptor> predicate);
 
         ///<inheritdoc cref="IAssetAdministrationShellRegistryInterface.DeleteAssetAdministrationShellRegistration(string)"/>
         Task<IResult> DeleteAssetAdministrationShellRegistrationAsync(string aasIdentifier);
@@ -44,10 +44,10 @@ namespace BaSyx.API.Clients
         Task<IResult<ISubmodelDescriptor>> UpdateSubmodelRegistrationAsync(string aasIdentifier, string submodelIdentifier, ISubmodelDescriptor submodelDescriptor);
 
         ///<inheritdoc cref="IAssetAdministrationShellRegistryInterface.RetrieveAllSubmodelRegistrations(string)"/>
-        Task<IResult<IQueryableElementContainer<ISubmodelDescriptor>>> RetrieveAllSubmodelRegistrationsAsync(string aasIdentifier);
+        Task<IResult<IEnumerable<ISubmodelDescriptor>>> RetrieveAllSubmodelRegistrationsAsync(string aasIdentifier);
 
         ///<inheritdoc cref="IAssetAdministrationShellRegistryInterface.RetrieveAllSubmodelRegistrations(string, Predicate{ISubmodelDescriptor})"/>
-        Task<IResult<IQueryableElementContainer<ISubmodelDescriptor>>> RetrieveAllSubmodelRegistrationsAsync(string aasIdentifier, Predicate<ISubmodelDescriptor> predicate);
+        Task<IResult<IEnumerable<ISubmodelDescriptor>>> RetrieveAllSubmodelRegistrationsAsync(string aasIdentifier, Predicate<ISubmodelDescriptor> predicate);
 
         ///<inheritdoc cref="IAssetAdministrationShellRegistryInterface.RetrieveSubmodelRegistration(string, string)"/>
         Task<IResult<ISubmodelDescriptor>> RetrieveSubmodelRegistrationAsync(string aasIdentifier, string submodelIdentifier);

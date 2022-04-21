@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
 * Copyright (c) 2022 Bosch Rexroth AG
 * Author: Constantin Ziesche (constantin.ziesche@bosch.com)
 *
@@ -8,16 +8,9 @@
 *
 * SPDX-License-Identifier: MIT
 *******************************************************************************/
-using System.Runtime.Serialization;
-
 namespace BaSyx.Models.Connectivity
 {
-    public interface IEndpoint
+    public class SecurityAttribute
     {
-        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "protocolInformation")]
-        ProtocolInformation ProtocolInformation { get; }
-
-        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "interface")]
-        InterfaceName Interface { get; }
     }
 }

@@ -14,6 +14,7 @@ using BaSyx.Utils.ResultHandling;
 using System;
 using BaSyx.Models.Connectivity;
 using BaSyx.API.Interfaces;
+using BaSyx.API.Clients;
 
 namespace BaSyx.API.ServiceProvider
 {
@@ -91,6 +92,13 @@ namespace BaSyx.API.ServiceProvider
         public static ISubmodelServiceProvider CreateServiceProvider(this ISubmodel submodel)
         {
             InternalSubmodelServiceProvider sp = new InternalSubmodelServiceProvider(submodel);
+
+            return sp;
+        }
+
+        public static ISubmodelServiceProvider CreateServiceProvider(this ISubmodelClient submodelClient)
+        {
+            SubmodelClientServiceProvider sp = new SubmodelClientServiceProvider(submodelClient);
 
             return sp;
         }

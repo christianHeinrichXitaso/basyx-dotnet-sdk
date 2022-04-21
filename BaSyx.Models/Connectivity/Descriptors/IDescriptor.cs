@@ -8,13 +8,16 @@
 *
 * SPDX-License-Identifier: MIT
 *******************************************************************************/
-using BaSyx.Models.AdminShell;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace BaSyx.Models.Connectivity
 {
-    public interface IServiceDescriptor : IAddressable, IIdentifiable
+    public interface IDescriptor
     {
+        [DataMember(EmitDefaultValue = false, IsRequired = false, Name = "endpoints")]
+        IEnumerable<IEndpoint> Endpoints { get; }
+
         void AddEndpoints(IEnumerable<IEndpoint> endpoints);
         void SetEndpoints(IEnumerable<IEndpoint> endpoints);
     }
