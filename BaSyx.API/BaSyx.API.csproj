@@ -24,6 +24,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\BaSyx.Models\BaSyx.Models.csproj" />
+    <ProjectReference Include="..\BaSyx.Utils.DependencyInjection\BaSyx.Utils.DependencyInjection.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +32,10 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">

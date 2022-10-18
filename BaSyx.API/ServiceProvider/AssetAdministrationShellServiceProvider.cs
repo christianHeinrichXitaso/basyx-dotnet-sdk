@@ -158,7 +158,7 @@ namespace BaSyx.API.ServiceProvider
             return new Result<IAssetAdministrationShell>(true, _assetAdministrationShell);
         }
 
-        public IResult UpdateAssetAdministrationShell(IAssetAdministrationShell aas)
+        public virtual IResult UpdateAssetAdministrationShell(IAssetAdministrationShell aas)
         {
             if (_assetAdministrationShell == null)
                 return new Result(false, new ErrorMessage("The service provider's inner Asset Administration Shell object is null"));
